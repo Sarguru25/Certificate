@@ -1,0 +1,132 @@
+@import "tailwindcss";
+
+:root {
+  --primary: #FF2D01;
+  --primary-hover: #e52800;
+  --primary-active: #cc2400;
+  --primary-light: #fff0ed;
+  --secondary: #737373;
+  --background: #F7F7F7;
+  --foreground: #222222;
+  --border: #E5E5E5;
+  --white: #FFFFFF;
+}
+
+body {
+  background-color: var(--background);
+  color: var(--foreground);
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  margin: 0;
+  padding: 0;
+}
+
+/* Custom scrollbars */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: #f1f5f9;
+}
+::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 3px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #94a3b8;
+}
+
+/* Animations */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fadeIn {
+  animation: fadeIn 0.2s ease-out forwards;
+}
+
+/* Certificate A4 Document Typography & Crisp Print Styling */
+#certificate-a4-document {
+  font-family: Arial, "Helvetica Neue", Helvetica, sans-serif;
+  letter-spacing: 0.015em;
+  word-spacing: 0.05em;
+  font-variant-ligatures: none;
+  text-rendering: geometricPrecision;
+}
+
+#certificate-a4-document table,
+#certificate-a4-document th,
+#certificate-a4-document td,
+#certificate-a4-document p,
+#certificate-a4-document span,
+#certificate-a4-document div {
+  font-family: Arial, "Helvetica Neue", Helvetica, sans-serif;
+}
+
+/* Dedicated Print Stylesheet */
+@media print {
+  @page {
+    size: A4 portrait;
+    margin: 0mm;
+  }
+
+  html,
+  body {
+    background: #ffffff !important;
+    color: #000000 !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    width: 210mm !important;
+    height: 297mm !important;
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+
+  /* Hide everything by default */
+  body * {
+    visibility: hidden !important;
+  }
+
+  /* Only make the A4 document and its descendants visible */
+  #certificate-a4-document,
+  #certificate-a4-document * {
+    visibility: visible !important;
+  }
+
+  #certificate-a4-document {
+    position: fixed !important;
+    left: 0 !important;
+    top: 0 !important;
+    width: 210mm !important;
+    min-height: 297mm !important;
+    height: 297mm !important;
+    max-height: 297mm !important;
+    margin: 0 !important;
+    padding: 10mm 12mm !important;
+    box-sizing: border-box !important;
+    box-shadow: none !important;
+    transform: none !important;
+    page-break-after: avoid !important;
+    page-break-inside: avoid !important;
+  }
+
+  body:has(#certificate-a4-document[data-orientation="landscape"]) {
+    width: 297mm !important;
+    height: 210mm !important;
+  }
+
+  #certificate-a4-document[data-orientation="landscape"] {
+    width: 297mm !important;
+    min-height: 210mm !important;
+    height: 210mm !important;
+    max-height: 210mm !important;
+    padding: 8mm 10mm !important;
+  }
+}

@@ -1,0 +1,186 @@
+import { CertificateType } from "@/types/certificate";
+
+export interface CertificateTypeConfig {
+  key: CertificateType;
+  name: string;
+  prefix: string;
+  image?: string;
+  isPdfAsset?: boolean;
+  description: string;
+  defaultData: Record<string, unknown>;
+}
+
+export const CERTIFICATE_TYPES: Record<CertificateType, CertificateTypeConfig> = {
+  "solenoid-valve": {
+    key: "solenoid-valve",
+    name: "Solenoid Valve",
+    prefix: "ZIN",
+    image: "/Solenoid-Valve.jpeg",
+    description: "Factory acceptance and pressure test certificate for Namur solenoid valves",
+    defaultData: {
+      valveType: "Solenoid Valve",
+      configuration: "5/2 Way",
+      operatingVoltage: "24 V DC",
+      coilType: "Normally Closed (NC)",
+      manufacturer: "Zeetork",
+      modelNumber: "ZLV310F30A",
+      quantity: 6,
+      mounting: "Namur",
+      portSize: "1/4\" BSP",
+      protectionType: "Weather",
+      protectionRating: "IP66",
+      exproofType: "Exdb IIIC T6 Gb",
+      switchingTestCriteria: "24V DC",
+      switchingTestResult: "OK",
+      responseTimeCriteria: "< 20 ms",
+      responseTimeResult: "15 ms",
+      leakTestCriteria: "Air @ 6 bar",
+      leakTestResult: "No leakage",
+      operatingPressureCriteria: "0.5 – 10 bar",
+      operatingPressureResult: "OK",
+      witnessedBy: "SIVAGANESHAN.V.A",
+      verifiedBy: "KARTHIKEYAN.A",
+      showSignatures: true,
+      witnessSignatureUrl: "/signature-sivaganeshan.png",
+      verifiedSignatureUrl: "/signature-karthikeyan.jpeg",
+    },
+  },
+  "electric-actuator": {
+    key: "electric-actuator",
+    name: "Electric Actuator",
+    prefix: "ZIN",
+    image: "/Electric-Actuator.jpeg",
+    description: "Inspection and operational performance certificate for electric quarter-turn actuators",
+    defaultData: {
+      productName: "Electric Actuator",
+      modelNumber: "ZRE-050",
+      operatingVoltage: "24V DC",
+      actuatorType: "Rotary Electric Actuator",
+      ratedTorque: "50",
+      temperature: "-20c to + 60c",
+      visualInspectionCriteria: "No physical damage, corrosion, or defects",
+      visualInspectionMeasured: "No damage",
+      visualInspectionResult: "Pass",
+      supplyVoltageCriteria: "24V DC",
+      supplyVoltageMeasured: "24V",
+      supplyVoltageResult: "Pass",
+      currentConsumptionCriteria: "≤1 A",
+      currentConsumptionMeasured: ".25A",
+      currentConsumptionResult: "Pass",
+      rotationAngleCriteria: "90°±2%",
+      rotationAngleMeasured: "90°",
+      rotationAngleResult: "Pass",
+      operatingTimeCriteria: "≤7 Sec",
+      operatingTimeMeasured: "7 Sec",
+      operatingTimeResult: "Pass",
+      functionalTestCriteria: "Smooth Operation",
+      functionalTestMeasured: "Smooth",
+      functionalTestResult: "Pass",
+      witnessedBy: "SIVAGANESHAN.V.A",
+      verifiedBy: "KARTHIKEYAN.A",
+      showSignatures: true,
+      witnessSignatureUrl: "/signature-sivaganeshan.png",
+      verifiedSignatureUrl: "/signature-karthikeyan.jpeg",
+    },
+  },
+  "limit-switch": {
+    key: "limit-switch",
+    name: "Limit Switch Box",
+    prefix: "ZIN",
+    image: "/Limit-Switch.jpg",
+    description: "Visual and mechanical contact test certificate for microswitch monitor boxes",
+    defaultData: {
+      productName: "Limit Switch Box",
+      modelNumber: "APL-210N",
+      quantity: 1,
+      switchType: "Honeywell type",
+      contactType: "SPDT *2",
+      operatingVoltage: "125-250V AC",
+      ratedCurrent: "16A",
+      temperature: "-20°C TO +60°C",
+      enclosure: "Weatherproof : IP66",
+      visualInspectionCriteria: "No physical damage, corrosion, or defects",
+      visualInspectionMeasured: "No damage",
+      visualInspectionResult: "Pass",
+      mechanicalOperationCriteria: "Manual actuation of lever",
+      mechanicalOperationMeasured: "Smooth",
+      mechanicalOperationResult: "Pass",
+      contactFunctionalityCriteria: "NO/NC contacts toggle correctly",
+      contactFunctionalityMeasured: "Functional",
+      contactFunctionalityResult: "Pass",
+      witnessedBy: "SIVAGANESHAN.V.A",
+      verifiedBy: "KARTHIKEYAN.A",
+      showSignatures: true,
+      witnessSignatureUrl: "/signature-sivaganeshan.png",
+      verifiedSignatureUrl: "/signature-karthikeyan.jpeg",
+    },
+  },
+  "pneumatic-actuator": {
+    key: "pneumatic-actuator",
+    name: "Pneumatic Actuator",
+    prefix: "ZIN",
+    image: "/pneumatic actuator.png",
+    description: "Pneumatic rack and pinion actuator functional and stroke speed certificate",
+    defaultData: {
+      testingLocation: "Coimbatore",
+      lineItems: [
+        {
+          sNo: 1,
+          actuatorMake: "ZEETORK",
+          actuatorModel: "ZRC8DA",
+          springQty: "N/A for DA",
+          actuatorSerialNo: "250106464",
+          accessoriesCheck: "NA",
+          testPrBar: "6",
+          stroke1Open: "0.3S",
+          stroke1Close: "0.3S",
+          stroke2Open: "0.3S",
+          stroke2Close: "0.3S",
+          stroke3Open: "0.3S",
+          stroke3Close: "0.3S",
+          result: "Pass",
+        },
+      ],
+      witnessedBy: "SIVAGANESHAN.V.A",
+      verifiedBy: "KARTHIKEYAN.A",
+      showSignatures: true,
+      witnessSignatureUrl: "/signature-sivaganeshan.png",
+      verifiedSignatureUrl: "/signature-karthikeyan.jpeg",
+    },
+  },
+  "warranty-certificate": {
+    key: "warranty-certificate",
+    name: "Warranty Certificate",
+    prefix: "ZIN",
+    image: "/WARRANTY CERTIFICATE.png",
+    isPdfAsset: true,
+    description: "Commercial quality warranty and assurance document for automated valves",
+    defaultData: {
+      customerName: "",
+      salesOrderNo: "",
+      salesOrderDate: "",
+      customerPO: "PO00900",
+      customerPODate: "10-09-2026",
+      certificateDate: new Date().toISOString().split("T")[0],
+      testingLocation: "Coimbatore",
+      productDescription: "",
+      salutation: "To whom so here it my concern,",
+      warrantyPeriod: "18 months from the date of supply or 12 months from the date of installation, whichever is earlier.",
+      warrantyNote: "The warranty is applicable only to manufacturing defects and does not cover normal wear and tear, improper usage, mishandling, or damage caused by improper installation or maintenance.",
+      issuedBy: "V.A SIVAGANESHAN",
+      witnessedBy: "V.A SIVAGANESHAN",
+      showSignatures: true,
+      witnessSignatureUrl: "/signature-sivaganeshan.png",
+    },
+  },
+};
+
+export const CERTIFICATE_TYPE_LIST = Object.values(CERTIFICATE_TYPES);
+
+export function getCertificateConfig(type: string): CertificateTypeConfig | undefined {
+  return CERTIFICATE_TYPES[type as CertificateType];
+}
+
+export function isValidCertificateType(type: string): type is CertificateType {
+  return type in CERTIFICATE_TYPES;
+}
