@@ -57,9 +57,8 @@ export const WarrantyCertificateTemplate: React.FC<WarrantyTemplateProps> = ({
         padding: "24px 28px",
       }}
     >
-      <div className="w-full h-full border border-black flex flex-col justify-between p-0 box-border bg-white min-h-[1075px]">
-        <div>
-          {/* Header without subtitle bar */}
+      <div className="w-full border border-black flex flex-col p-0 box-border bg-white">
+        {/* Header without subtitle bar */}
           <CertificateHeader
             title="WARRANTY CERTIFICATE"
             certificateNumber={certificateNumber}
@@ -166,14 +165,23 @@ export const WarrantyCertificateTemplate: React.FC<WarrantyTemplateProps> = ({
 
                       <div className="my-2 flex items-center h-[70px]">
                         {showSignatures ? (
-                          <div className="relative h-[65px] w-[140px]">
-                            {/* eslint-disable-next-line @next/next/no-img-element */}
-                            <img
-                              src={signatureUrl}
-                              alt="Authorized Signature"
-                              className="h-full w-full object-contain mix-blend-multiply"
+                          <>
+                            <div
+                              data-signature-img="true"
+                              className="signature-image signature-image-container print-hide-signature relative h-[65px] w-[140px]"
+                            >
+                              {/* eslint-disable-next-line @next/next/no-img-element */}
+                              <img
+                                src={signatureUrl}
+                                alt="Authorized Signature"
+                                className="h-full w-full object-contain mix-blend-multiply"
+                              />
+                            </div>
+                            <div
+                              data-signature-blank="true"
+                              className="signature-blank-line print-show-blank hidden w-[140px] border-b border-dashed border-gray-400 mt-8"
                             />
-                          </div>
+                          </>
                         ) : (
                           <div className="w-[140px] border-b border-dashed border-gray-400 mt-8" />
                         )}
@@ -193,7 +201,6 @@ export const WarrantyCertificateTemplate: React.FC<WarrantyTemplateProps> = ({
           </div>
 
           <CertificateFooter />
-        </div>
       </div>
     </div>
   );

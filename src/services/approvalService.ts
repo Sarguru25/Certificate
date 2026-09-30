@@ -27,6 +27,7 @@ export async function submitCertificateForApproval(
   const approverRoles = await Role.find({
     $or: [
       { permissions: "certificates.approve" },
+      { permissions: "approve.certificate" },
       { name: "Administrator" },
       { name: "Approver" },
     ],
@@ -122,36 +123,60 @@ export async function approveCertificate(
     throw new Error("Certificate not found");
   }
 
-  if (certificate.status !== "PENDING_APPROVAL") {
-    throw new Error(`Cannot approve certificate with status: ${certificate.status}`);
+  if (certificate.status === "APPROVED") {
+    throw new Error("This certificate has already been approved and sealed.");
   }
 
-  // Enforce separation of duties: Creator cannot approve their own certificate
-  if (certificate.createdBy.toString() === user.id && user.roleName !== "Administrator") {
-    throw new Error("Separation of duties: Creators cannot approve their own certificate.");
+  // Ensure approval structure is initialized
+  if (!certificate.approval) {
+    certificate.approval = {
+      requiredApprovers: [],
+      approvals: [],
+    };
+  }
+  if (!certificate.approval.approvals) {
+    certificate.approval.approvals = [];
+  }
+  if (!certificate.approval.requiredApprovers) {
+    certificate.approval.requiredApprovers = [];
   }
 
-  // If user is Admin but not explicitly assigned, allow substituting one pending slot
+  // Look for an existing approval slot for this user
   let approvalSlotIndex = certificate.approval.approvals.findIndex(
-    (a) => a.userId.toString() === user.id
+    (a) => {
+      const uId = a.userId as unknown;
+      const idStr =
+        typeof uId === "object" && uId !== null && "_id" in uId
+          ? String((uId as { _id: unknown })._id)
+          : String(a.userId);
+      return idStr === user.id;
+    }
   );
 
+  // If user is not yet assigned to a slot, claim any pending slot or create a new slot for this approver
   if (approvalSlotIndex === -1) {
-    if (user.roleName === "Administrator") {
-      approvalSlotIndex = certificate.approval.approvals.findIndex(
-        (a) => a.status === "PENDING"
-      );
-      if (approvalSlotIndex !== -1) {
-        certificate.approval.approvals[approvalSlotIndex].userId = new mongoose.Types.ObjectId(user.id);
+    const pendingIndex = certificate.approval.approvals.findIndex(
+      (a) => a.status === "PENDING"
+    );
+    if (pendingIndex !== -1) {
+      approvalSlotIndex = pendingIndex;
+      certificate.approval.approvals[approvalSlotIndex].userId = new mongoose.Types.ObjectId(user.id);
+      if (
+        certificate.approval.requiredApprovers &&
+        certificate.approval.requiredApprovers[approvalSlotIndex]
+      ) {
         certificate.approval.requiredApprovers[approvalSlotIndex] = new mongoose.Types.ObjectId(user.id);
+      } else {
+        certificate.approval.requiredApprovers.push(new mongoose.Types.ObjectId(user.id));
       }
     } else {
-      throw new Error("You are not an assigned approver for this certificate.");
+      certificate.approval.approvals.push({
+        userId: new mongoose.Types.ObjectId(user.id),
+        status: "PENDING",
+      });
+      certificate.approval.requiredApprovers.push(new mongoose.Types.ObjectId(user.id));
+      approvalSlotIndex = certificate.approval.approvals.length - 1;
     }
-  }
-
-  if (approvalSlotIndex === -1) {
-    throw new Error("No pending approval slot available for this certificate.");
   }
 
   const existingApproval = certificate.approval.approvals[approvalSlotIndex];
@@ -159,12 +184,12 @@ export async function approveCertificate(
     throw new Error("You have already approved this certificate.");
   }
 
-  // Record approval on the specific approver slot
+  // Record approval on the approver slot
   existingApproval.status = "APPROVED";
   existingApproval.approvedAt = new Date();
   existingApproval.note = note || undefined;
 
-  // Single-approver workflow: when ANY ONE authorized approver approves, the certificate is immediately APPROVED!
+  // Single-approver workflow: approval immediately seals the document
   certificate.status = "APPROVED";
   certificate.approvedAt = new Date();
   certificate.approvalHistory.push({
@@ -199,20 +224,31 @@ export async function rejectCertificate(
     throw new Error("Certificate not found");
   }
 
-  if (certificate.status !== "PENDING_APPROVAL") {
-    throw new Error(`Cannot reject certificate with status: ${certificate.status}`);
+  if (certificate.status === "APPROVED") {
+    throw new Error("Cannot reject an already approved certificate.");
   }
 
-  const requiredStr = certificate.approval.requiredApprovers.map((id) => id.toString());
-  const isAssigned = requiredStr.includes(user.id);
-
-  if (!isAssigned && user.roleName !== "Administrator") {
-    throw new Error("You are not authorized to reject this certificate.");
+  // Ensure approval structure
+  if (!certificate.approval) {
+    certificate.approval = {
+      requiredApprovers: [],
+      approvals: [],
+    };
+  }
+  if (!certificate.approval.approvals) {
+    certificate.approval.approvals = [];
   }
 
-  // Update approver's entry
+  // Update approver's entry if exists or add rejection
   const approverSlot = certificate.approval.approvals.find(
-    (a) => a.userId.toString() === user.id
+    (a) => {
+      const uId = a.userId as unknown;
+      const idStr =
+        typeof uId === "object" && uId !== null && "_id" in uId
+          ? String((uId as { _id: unknown })._id)
+          : String(a.userId);
+      return idStr === user.id;
+    }
   );
   if (approverSlot) {
     approverSlot.status = "REJECTED";

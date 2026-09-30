@@ -34,15 +34,24 @@ export const SignatureSection: React.FC<SignatureSectionProps> = ({ data }) => {
 
                 <div className="my-1 flex items-center justify-center h-[70px] w-full">
                   {data.showSignatures && data.witnessSignatureUrl ? (
-                    <div className="relative h-[65px] w-[140px]">
-                      {/* Standard img tag for html2canvas compatibility */}
-                      {/* eslint-disable-next-line @next/next/no-img-element */}
-                      <img
-                        src={data.witnessSignatureUrl}
-                        alt="Witness Signature"
-                        className="h-full w-full object-contain mix-blend-multiply"
+                    <>
+                      <div
+                        data-signature-img="true"
+                        className="signature-image signature-image-container print-hide-signature relative h-[65px] w-[140px]"
+                      >
+                        {/* Standard img tag for html2canvas compatibility */}
+                        {/* eslint-disable-next-line @next/next/no-img-element */}
+                        <img
+                          src={data.witnessSignatureUrl}
+                          alt="Witness Signature"
+                          className="h-full w-full object-contain mix-blend-multiply"
+                        />
+                      </div>
+                      <div
+                        data-signature-blank="true"
+                        className="signature-blank-line print-show-blank hidden w-4/5 border-b border-dashed border-[#9ca3af] mt-10"
                       />
-                    </div>
+                    </>
                   ) : (
                     <div className="w-4/5 border-b border-dashed border-[#9ca3af] mt-10"></div>
                   )}
@@ -63,15 +72,24 @@ export const SignatureSection: React.FC<SignatureSectionProps> = ({ data }) => {
 
                 <div className="my-1 flex items-center justify-center h-[70px] w-full">
                   {data.showSignatures && data.verifiedSignatureUrl ? (
-                    <div className="relative h-[65px] w-[140px]">
-                      {/* Standard img tag for html2canvas compatibility */}
-                      {/* eslint-disable-next-line @next/next/no-img-element */}
-                      <img
-                        src={data.verifiedSignatureUrl}
-                        alt="Verified Signature"
-                        className="h-full w-full object-contain mix-blend-multiply"
+                    <>
+                      <div
+                        data-signature-img="true"
+                        className="signature-image signature-image-container print-hide-signature relative h-[65px] w-[140px]"
+                      >
+                        {/* Standard img tag for html2canvas compatibility */}
+                        {/* eslint-disable-next-line @next/next/no-img-element */}
+                        <img
+                          src={data.verifiedSignatureUrl}
+                          alt="Verified Signature"
+                          className="h-full w-full object-contain mix-blend-multiply"
+                        />
+                      </div>
+                      <div
+                        data-signature-blank="true"
+                        className="signature-blank-line print-show-blank hidden w-4/5 border-b border-dashed border-[#9ca3af] mt-10"
                       />
-                    </div>
+                    </>
                   ) : (
                     <div className="w-4/5 border-b border-dashed border-[#9ca3af] mt-10"></div>
                   )}

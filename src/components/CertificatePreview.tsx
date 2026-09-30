@@ -130,9 +130,8 @@ export const CertificatePreview: React.FC<CertificatePreviewProps> = ({
             }}
           >
             {/* FULL BORDER ENCLOSURE */}
-            <div className="w-full h-full border border-black flex flex-col justify-between p-0 box-border bg-white">
+            <div className="w-full border border-black flex flex-col p-0 box-border bg-white">
               {/* HEADER SECTION */}
-              <div>
                 <CertificateHeader
                   title="Certificate of Conformity"
                   subtitle="Solenoid Valve"
@@ -157,11 +156,10 @@ export const CertificatePreview: React.FC<CertificatePreviewProps> = ({
 
                 {/* SIGNATURE SECTION */}
                 <SignatureSection data={data} />
-              </div>
 
-              {/* COMPANY FOOTER */}
-              <CertificateFooter />
-            </div>
+                {/* COMPANY FOOTER */}
+                <CertificateFooter />
+              </div>
           </div>
         </div>
       </div>

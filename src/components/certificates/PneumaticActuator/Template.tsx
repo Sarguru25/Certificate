@@ -64,9 +64,8 @@ export const PneumaticActuatorTemplate: React.FC<PneumaticActuatorTemplateProps>
       `}</style>
 
       {/* Outer 1px border container */}
-      <div className="w-full h-full border border-black flex flex-col justify-between p-0 box-border bg-white">
-        <div>
-          {/* Header with 1px borders and 4-box grid */}
+      <div className="w-full border border-black flex flex-col p-0 box-border bg-white">
+        {/* Header with 1px borders and 4-box grid */}
           <CertificateHeader
             title="Certificate of Conformity"
             subtitle="Pneumatic Actuator"
@@ -275,7 +274,6 @@ export const PneumaticActuatorTemplate: React.FC<PneumaticActuatorTemplateProps>
               verifiedBy: data.verifiedBy || "KARTHIKEYAN.A",
             }}
           />
-        </div>
 
         <CertificateFooter />
       </div>

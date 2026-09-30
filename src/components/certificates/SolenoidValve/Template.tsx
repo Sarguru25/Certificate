@@ -29,35 +29,33 @@ export const SolenoidValveTemplate: React.FC<SolenoidValveTemplateProps> = ({
       }}
     >
       {/* Outer 1px border container */}
-      <div className="w-full h-full border border-black flex flex-col justify-between p-0 box-border bg-white">
-        <div>
-          {/* Header with 1px borders and 4-box grid */}
-          <CertificateHeader
-            title="Certificate of Conformity"
-            subtitle="Solenoid Valve"
-            certificateNumber={certificateNumber}
-            customerName={data.customerName}
-            salesOrderNo={data.salesOrderNo}
-            customerPO={data.customerPO}
-            certificateDate={data.certificateDate}
-          />
+      <div className="w-full border border-black flex flex-col p-0 box-border bg-white">
+        {/* Header with 1px borders and 4-box grid */}
+        <CertificateHeader
+          title="Certificate of Conformity"
+          subtitle="Solenoid Valve"
+          certificateNumber={certificateNumber}
+          customerName={data.customerName}
+          salesOrderNo={data.salesOrderNo}
+          customerPO={data.customerPO}
+          certificateDate={data.certificateDate}
+        />
 
-          {/* Table with 3 sections and 1px borders */}
-          <CertificateTable data={data} />
+        {/* Table with 3 sections and 1px borders */}
+        <CertificateTable data={data} />
 
-          {/* Certification statement with 1px bottom border */}
-          <div className="border-b border-black p-3 text-center bg-white">
-            <p className="text-[11.5px] leading-relaxed font-bold">
-              This is to certify that the solenoid valve listed above has been tested and inspected according to the applicable quality standards.
-            </p>
-            <p className="text-[11.5px] leading-relaxed font-bold mt-1">
-              It has passed all specified tests and is compliant with the stated performance and safety requirements.
-            </p>
-          </div>
-
-          {/* Signature section with 1px middle divider */}
-          <SignatureSection data={data} />
+        {/* Certification statement with 1px bottom border */}
+        <div className="border-b border-black p-3 text-center bg-white">
+          <p className="text-[11.5px] leading-relaxed font-bold">
+            This is to certify that the solenoid valve listed above has been tested and inspected according to the applicable quality standards.
+          </p>
+          <p className="text-[11.5px] leading-relaxed font-bold mt-1">
+            It has passed all specified tests and is compliant with the stated performance and safety requirements.
+          </p>
         </div>
+
+        {/* Signature section with 1px middle divider */}
+        <SignatureSection data={data} />
 
         {/* Footer with 1px top border */}
         <CertificateFooter />

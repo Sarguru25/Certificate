@@ -33,7 +33,9 @@ export type PermissionCode =
   | "certificates.delete"
   | "certificates.submit"
   | "certificates.approve"
+  | "approve.certificate"
   | "certificates.reject"
+  | "reject.certificate"
   | "certificates.download";
 
 export interface PermissionDefinition {

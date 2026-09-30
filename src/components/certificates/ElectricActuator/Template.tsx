@@ -212,9 +212,8 @@ export const ElectricActuatorTemplate: React.FC<ElectricActuatorTemplateProps> =
         padding: "24px 28px",
       }}
     >
-      <div className="w-full h-full border border-black flex flex-col justify-between p-0 box-border bg-white">
-        <div>
-          {/* Header */}
+      <div className="w-full border border-black flex flex-col p-0 box-border bg-white">
+        {/* Header */}
           <CertificateHeader
             title="Certificate of Conformity"
             subtitle="ELECTRIC ACTUATOR"
@@ -354,7 +353,6 @@ export const ElectricActuatorTemplate: React.FC<ElectricActuatorTemplateProps> =
               verifiedBy: data.verifiedBy || "KARTHIKEYAN.A",
             }}
           />
-        </div>
 
         <CertificateFooter />
       </div>

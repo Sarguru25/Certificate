@@ -171,20 +171,33 @@ export default function CertificateViewPage({ params }: PageProps) {
     })
   );
 
+  // Check if current user is an Approver, Administrator, or has approval privileges
+  const isApproverUser = Boolean(
+    currentUser &&
+    (currentUser.roleName === "Approver" ||
+      currentUser.roleName === "Administrator" ||
+      currentUser.permissions?.includes("certificates.approve") ||
+      (currentUser.permissions as unknown as string[])?.includes("approve.certificate") ||
+      isAssignedApprover)
+  );
+
+  const isRejecterUser = Boolean(
+    currentUser &&
+    (currentUser.roleName === "Approver" ||
+      currentUser.roleName === "Administrator" ||
+      currentUser.permissions?.includes("certificates.reject") ||
+      (currentUser.permissions as unknown as string[])?.includes("reject.certificate") ||
+      isAssignedApprover)
+  );
+
   const canApprove =
-    certificate.status === "PENDING_APPROVAL" &&
-    (isAssignedApprover ||
-      currentUser?.roleName === "Administrator" ||
-      currentUser?.permissions?.includes("certificates.approve")) &&
-    (!isCreator || currentUser?.roleName === "Administrator") &&
+    isApproverUser &&
+    certificate.status !== "APPROVED" &&
     !hasAlreadyApproved;
 
   const canReject =
-    certificate.status === "PENDING_APPROVAL" &&
-    (isAssignedApprover ||
-      currentUser?.roleName === "Administrator" ||
-      currentUser?.permissions?.includes("certificates.reject")) &&
-    (!isCreator || currentUser?.roleName === "Administrator");
+    isRejecterUser &&
+    certificate.status !== "APPROVED";
 
   const canEdit =
     certificate.status === "DRAFT" || certificate.status === "REJECTED";
@@ -363,7 +376,7 @@ export default function CertificateViewPage({ params }: PageProps) {
           <div className="flex items-center gap-1.5 bg-slate-100 p-1 rounded-xl border border-slate-200">
             <button
               type="button"
-              onClick={printCertificate}
+              onClick={() => printCertificate("certificate-a4-document")}
               className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold text-slate-700 bg-white hover:bg-slate-50 border border-slate-200 rounded-lg transition shadow-2xs"
             >
               <Printer className="w-3.5 h-3.5 text-slate-500" />

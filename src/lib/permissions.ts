@@ -132,11 +132,52 @@ export const DEFAULT_ROLE_PERMISSIONS: Record<string, PermissionCode[]> = {
  */
 export function hasPermission(
   user: SessionUser | null | undefined,
-  permission: PermissionCode
+  permission: PermissionCode | string
 ): boolean {
   if (!user || !user.isActive) return false;
   if (user.roleName === "Administrator") return true;
-  return user.permissions?.includes(permission) ?? false;
+
+  // Support both "certificates.approve" and "approve.certificate"
+  if (
+    permission === "certificates.approve" ||
+    permission === "approve.certificate"
+  ) {
+    if (user.roleName === "Approver") return true;
+    if (
+      user.permissions?.includes("certificates.approve") ||
+      (user.permissions as unknown as string[])?.includes("approve.certificate")
+    ) {
+      return true;
+    }
+  }
+
+  // Support both "certificates.reject" and "reject.certificate"
+  if (
+    permission === "certificates.reject" ||
+    permission === "reject.certificate"
+  ) {
+    if (user.roleName === "Approver") return true;
+    if (
+      user.permissions?.includes("certificates.reject") ||
+      (user.permissions as unknown as string[])?.includes("reject.certificate")
+    ) {
+      return true;
+    }
+  }
+
+  // Common approver permissions
+  if (
+    (permission === "certificates.view" || permission === "certificates.download") &&
+    user.roleName === "Approver"
+  ) {
+    return true;
+  }
+
+  return (
+    user.permissions?.includes(permission as PermissionCode) ||
+    (user.permissions as unknown as string[])?.includes(permission) ||
+    false
+  );
 }
 
 /**
@@ -144,9 +185,9 @@ export function hasPermission(
  */
 export function hasAnyPermission(
   user: SessionUser | null | undefined,
-  permissions: PermissionCode[]
+  permissions: (PermissionCode | string)[]
 ): boolean {
   if (!user || !user.isActive) return false;
   if (user.roleName === "Administrator") return true;
-  return permissions.some((perm) => user.permissions?.includes(perm));
+  return permissions.some((perm) => hasPermission(user, perm));
 }

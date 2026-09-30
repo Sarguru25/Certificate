@@ -171,7 +171,7 @@ export const ResponsiveCertificatePreview: React.FC<ResponsiveCertificatePreview
         className="w-full bg-slate-200/80 rounded-2xl border border-slate-300 overflow-x-auto overflow-y-auto p-2 sm:p-6 shadow-inner min-h-[480px] max-h-[85vh] touch-pan-x touch-pan-y"
       >
         <div
-          className="mx-auto flex-shrink-0"
+          className="mx-auto flex-shrink-0 print:!w-full print:!h-full print:!min-w-0 print:!min-h-0 print:!static"
           style={{
             width: `${Math.round(baseWidth * zoomLevel)}px`,
             height: `${Math.round(baseHeight * zoomLevel)}px`,
@@ -181,6 +181,7 @@ export const ResponsiveCertificatePreview: React.FC<ResponsiveCertificatePreview
           }}
         >
           <div
+            className="print:!transform-none print:!static print:!w-full print:!min-w-0"
             style={{
               width: `${baseWidth}px`,
               minWidth: `${baseWidth}px`,

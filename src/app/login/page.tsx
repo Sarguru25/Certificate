@@ -126,54 +126,6 @@ function LoginForm() {
         </button>
       </form>
 
-      {/* DEMO / QUICK LOGIN ASSISTANT
-      <div className="mt-6 pt-6 border-t border-slate-100">
-        <div className="flex items-center gap-1.5 text-xs font-bold text-slate-700 mb-2.5">
-          <Sparkles className="w-3.5 h-3.5 text-[#FF2D01]" />
-          <span>Quick Demo Accounts (1-Click Fill)</span>
-        </div>
-
-        <div className="grid grid-cols-2 gap-2 text-[11px]">
-          <button
-            type="button"
-            onClick={() => quickFill("admin@zeetork.com")}
-            className="p-2 text-left bg-slate-50 hover:bg-orange-50 hover:text-[#FF2D01] border border-slate-200 hover:border-orange-200 rounded-xl transition"
-          >
-            <div className="font-bold text-slate-800">Admin</div>
-            <div className="text-[10px] text-slate-400 truncate">admin@zeetork.com</div>
-          </button>
-
-          <button
-            type="button"
-            onClick={() => quickFill("operator@zeetork.com")}
-            className="p-2 text-left bg-slate-50 hover:bg-orange-50 hover:text-[#FF2D01] border border-slate-200 hover:border-orange-200 rounded-xl transition"
-          >
-            <div className="font-bold text-slate-800">Employee</div>
-            <div className="text-[10px] text-slate-400 truncate">operator@zeetork.com</div>
-          </button>
-
-          <button
-            type="button"
-            onClick={() => quickFill("sivaganeshan@zeetork.com")}
-            className="p-2 text-left bg-slate-50 hover:bg-orange-50 hover:text-[#FF2D01] border border-slate-200 hover:border-orange-200 rounded-xl transition"
-          >
-            <div className="font-bold text-slate-800">Approver A</div>
-            <div className="text-[10px] text-slate-400 truncate">sivaganeshan@...</div>
-          </button>
-
-          <button
-            type="button"
-            onClick={() => quickFill("karthikeyan@zeetork.com")}
-            className="p-2 text-left bg-slate-50 hover:bg-orange-50 hover:text-[#FF2D01] border border-slate-200 hover:border-orange-200 rounded-xl transition"
-          >
-            <div className="font-bold text-slate-800">Approver B</div>
-            <div className="text-[10px] text-slate-400 truncate">karthikeyan@...</div>
-          </button>
-        </div>
-        <p className="text-[10px] text-center text-slate-400 mt-2">
-          Default password: <code className="font-mono text-slate-600">Zeetork@2026</code>
-        </p>
-      </div> */}
     </div>
   );
 }
