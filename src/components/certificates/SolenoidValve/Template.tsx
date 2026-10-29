@@ -17,6 +17,7 @@ interface SolenoidValveTemplateProps {
 export const SolenoidValveTemplate: React.FC<SolenoidValveTemplateProps> = ({
   data,
   certificateNumber,
+  status,
 }) => {
   return (
     <div
@@ -47,15 +48,15 @@ export const SolenoidValveTemplate: React.FC<SolenoidValveTemplateProps> = ({
         {/* Certification statement with 1px bottom border */}
         <div className="border-b border-black p-3 text-center bg-white">
           <p className="text-[11.5px] leading-relaxed font-bold">
-            This is to certify that the solenoid valve listed above has been tested and inspected according to the applicable quality standards.
+            This is to certify that the products listed above are tested and inspected according to the applicable standards.
           </p>
           <p className="text-[11.5px] leading-relaxed font-bold mt-1">
-            It has passed all specified tests and is compliant with the stated performance and safety requirements.
+            It has passed all specified tests and is in compliance with the stated performance standards.
           </p>
         </div>
 
         {/* Signature section with 1px middle divider */}
-        <SignatureSection data={data} />
+        <SignatureSection data={data} status={status} />
 
         {/* Footer with 1px top border */}
         <CertificateFooter />

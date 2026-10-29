@@ -16,6 +16,7 @@ import {
   Search,
   CheckCircle2,
 } from "lucide-react";
+import { SignatorySelector } from "../common/SignatorySelector";
 
 interface ActuatorModelItem {
   series: string;
@@ -397,8 +398,7 @@ export const PneumaticActuatorForm: React.FC<PneumaticActuatorFormProps> = ({
               onClick={handleAddLineItem}
               className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl bg-[#FF2D01] text-white text-xs font-semibold hover:bg-[#e02700] transition shadow-xs"
             >
-              <Plus className="w-4 h-4" />
-              <span>Add Line Item</span>
+              <span>+ Add Line Item</span>
             </button>
             <button
               type="button"
@@ -443,7 +443,6 @@ export const PneumaticActuatorForm: React.FC<PneumaticActuatorFormProps> = ({
                 onClick={handleAddLineItem}
                 className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-2.5 rounded-xl border-2 border-dashed border-[#FF2D01]/50 text-[#FF2D01] font-semibold text-sm hover:bg-[#FF2D01]/5 transition"
               >
-                <Plus className="w-4 h-4" />
                 <span>+ Add Another Actuator Line Item</span>
               </button>
             </div>
@@ -472,32 +471,25 @@ export const PneumaticActuatorForm: React.FC<PneumaticActuatorFormProps> = ({
         </button>
 
         {openSections.verification && (
-          <div className="p-6 grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <div>
-              <label className="block text-xs font-medium text-slate-600 mb-1">
-                Performed By (Witnessed By)
-              </label>
-              <input
-                type="text"
-                value={data.witnessedBy ?? ""}
-                onChange={(e) => handleChange("witnessedBy", e.target.value)}
-                placeholder="SIVAGANESHAN.V.A"
-                className="w-full text-sm border border-slate-300 rounded-xl px-3 py-2 outline-none focus:ring-2 focus:ring-[#FF2D01]"
-              />
-            </div>
-
-            <div>
-              <label className="block text-xs font-medium text-slate-600 mb-1">
-                Verified By
-              </label>
-              <input
-                type="text"
-                value={data.verifiedBy ?? ""}
-                onChange={(e) => handleChange("verifiedBy", e.target.value)}
-                placeholder="KARTHIKEYAN.A"
-                className="w-full text-sm border border-slate-300 rounded-xl px-3 py-2 outline-none focus:ring-2 focus:ring-[#FF2D01]"
-              />
-            </div>
+          <div className="p-4 sm:p-6">
+            <SignatorySelector
+              witnessedBy={data.witnessedBy}
+              verifiedBy={data.verifiedBy}
+              witnessSignatureUrl={data.witnessSignatureUrl}
+              verifiedSignatureUrl={data.verifiedSignatureUrl}
+              onChangeWitnessedBy={(name, sigUrl) => {
+                handleChange("witnessedBy", name);
+                if (sigUrl !== undefined) {
+                  handleChange("witnessSignatureUrl", sigUrl);
+                }
+              }}
+              onChangeVerifiedBy={(name, sigUrl) => {
+                handleChange("verifiedBy", name);
+                if (sigUrl !== undefined) {
+                  handleChange("verifiedSignatureUrl", sigUrl);
+                }
+              }}
+            />
           </div>
         )}
       </div>

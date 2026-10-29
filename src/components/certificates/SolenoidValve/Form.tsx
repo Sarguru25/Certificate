@@ -15,6 +15,7 @@ import {
   CustomField,
 } from "@/types/certificate";
 import { CustomFieldsEditor } from "../common/CustomFieldsEditor";
+import { SignatorySelector } from "../common/SignatorySelector";
 import {
   CONFIGURATION_OPTIONS,
   OPERATING_VOLTAGE_OPTIONS,
@@ -743,44 +744,26 @@ export const SolenoidValveForm: React.FC<SolenoidValveFormProps> = ({
         </button>
 
         {openSections.verification && (
-          <div className="p-4 grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <div>
-              <label className="block text-xs font-semibold text-slate-700 mb-1">
-                Performed By (Approver A) <span className="text-red-500">*</span>
-              </label>
-              <input
-                type="text"
-                data-field="witnessedBy"
-                value={data.witnessedBy ?? ""}
-                onChange={(e) => handleChange("witnessedBy", e.target.value)}
-                placeholder="SIVAGANESHAN.V.A"
-                className={`w-full text-sm border rounded-xl px-3 py-2 outline-none focus:ring-2 focus:ring-[#FF2D01] ${
-                  errors.witnessedBy ? "border-red-400 bg-red-50/30" : "border-slate-300"
-                }`}
-              />
-              {errors.witnessedBy && (
-                <p className="text-xs text-red-600 mt-1">{errors.witnessedBy}</p>
-              )}
-            </div>
-
-            <div>
-              <label className="block text-xs font-semibold text-slate-700 mb-1">
-                Verified By (Approver B) <span className="text-red-500">*</span>
-              </label>
-              <input
-                type="text"
-                data-field="verifiedBy"
-                value={data.verifiedBy ?? ""}
-                onChange={(e) => handleChange("verifiedBy", e.target.value)}
-                placeholder="KARTHIKEYAN.A"
-                className={`w-full text-sm border rounded-xl px-3 py-2 outline-none focus:ring-2 focus:ring-[#FF2D01] ${
-                  errors.verifiedBy ? "border-red-400 bg-red-50/30" : "border-slate-300"
-                }`}
-              />
-              {errors.verifiedBy && (
-                <p className="text-xs text-red-600 mt-1">{errors.verifiedBy}</p>
-              )}
-            </div>
+          <div className="p-4">
+            <SignatorySelector
+              witnessedBy={data.witnessedBy}
+              verifiedBy={data.verifiedBy}
+              witnessSignatureUrl={data.witnessSignatureUrl}
+              verifiedSignatureUrl={data.verifiedSignatureUrl}
+              onChangeWitnessedBy={(name, sigUrl) => {
+                handleChange("witnessedBy", name);
+                if (sigUrl !== undefined) {
+                  handleChange("witnessSignatureUrl", sigUrl);
+                }
+              }}
+              onChangeVerifiedBy={(name, sigUrl) => {
+                handleChange("verifiedBy", name);
+                if (sigUrl !== undefined) {
+                  handleChange("verifiedSignatureUrl", sigUrl);
+                }
+              }}
+              errors={errors}
+            />
           </div>
         )}
       </div>

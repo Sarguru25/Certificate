@@ -8,6 +8,7 @@ import { CertificateRenderer } from "@/components/certificates/CertificateRender
 import { ResponsiveCertificatePreview } from "@/components/certificates/common/ResponsiveCertificatePreview";
 import { validateCertificate } from "@/lib/certificateValidation";
 import { AnyCertificateData } from "@/types/certificate";
+import { calculateValveFunctionalTestPages } from "@/lib/certificatePagination";
 import { ArrowLeft, Eye, FileText } from "lucide-react";
 import Link from "next/link";
 
@@ -23,7 +24,12 @@ export default function NewCertificatePage({ params }: PageProps) {
 
   const [activeTab, setActiveTab] = useState<"form" | "preview">("form");
   const [formData, setFormData] = useState<AnyCertificateData>(
-    config ? ({ ...config.defaultData, certificateDate: new Date().toISOString().slice(0, 10) } as AnyCertificateData) : ({} as AnyCertificateData)
+    config
+      ? ({
+          ...config.defaultData,
+          certificateDate: new Date().toISOString().slice(0, 10),
+        } as AnyCertificateData)
+      : ({} as AnyCertificateData)
   );
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [isSaving, setIsSaving] = useState(false);
@@ -37,6 +43,12 @@ export default function NewCertificatePage({ params }: PageProps) {
     );
   }
 
+  // Calculate pages count for multi-page certificates
+  const lineItemCount =
+    certificateType === "valve-functional-test"
+      ? calculateValveFunctionalTestPages(formData)
+      : (formData as unknown as { lineItems?: unknown[] })?.lineItems?.length || 1;
+
   const handleSave = async (initialStatus: "DRAFT" | "PENDING_APPROVAL") => {
     // If submitting for approval, enforce strict validation
     if (initialStatus === "PENDING_APPROVAL" && certificateType === "solenoid-valve") {
@@ -45,11 +57,13 @@ export default function NewCertificatePage({ params }: PageProps) {
         setErrors(val.errors as Record<string, string>);
         const missing = val.missingFieldsList?.join(", ") || "required fields";
         setGlobalError(`Please fill the following required field(s) before submitting: ${missing}`);
-        
+
         // Scroll to the first error element
         if (val.firstErrorField) {
           setTimeout(() => {
-            const el = document.querySelector(`[data-field="${val.firstErrorField}"], input[name="${val.firstErrorField}"], select[name="${val.firstErrorField}"]`);
+            const el = document.querySelector(
+              `[data-field="${val.firstErrorField}"], input[name="${val.firstErrorField}"], select[name="${val.firstErrorField}"]`
+            );
             if (el) {
               el.scrollIntoView({ behavior: "smooth", block: "center" });
               if (el instanceof HTMLElement) el.focus();
@@ -93,9 +107,9 @@ export default function NewCertificatePage({ params }: PageProps) {
   };
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 w-full">
       {/* BREADCRUMB & HEADER */}
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div className="flex items-center gap-3">
           <Link
             href={`/${certificateType}`}
@@ -112,9 +126,39 @@ export default function NewCertificatePage({ params }: PageProps) {
               <span className="text-xs font-semibold text-slate-600">New Certificate</span>
             </div>
             <h1 className="text-xl sm:text-2xl font-black text-slate-900 tracking-tight">
-              Create New {config.name} Certificate
+              Create New {config.name}
             </h1>
           </div>
+        </div>
+
+        {/* VIEW TOGGLE TABS (Full width single page layout for desktop & mobile) */}
+        <div className="flex bg-slate-100 p-1.5 rounded-2xl border border-slate-200 shadow-2xs w-full sm:w-auto">
+          <button
+            type="button"
+            onClick={() => setActiveTab("form")}
+            className={`flex-1 sm:flex-initial sm:px-6 py-2 text-xs font-bold rounded-xl transition flex items-center justify-center gap-2 ${
+              activeTab === "form"
+                ? "bg-white text-slate-900 shadow-xs"
+                : "text-slate-500 hover:text-slate-900"
+            }`}
+          >
+            <FileText className="w-4 h-4 text-[#FF2D01]" />
+            <span>Form Editor</span>
+          </button>
+          <button
+            type="button"
+            onClick={() => setActiveTab("preview")}
+            className={`flex-1 sm:flex-initial sm:px-6 py-2 text-xs font-bold rounded-xl transition flex items-center justify-center gap-2 ${
+              activeTab === "preview"
+                ? "bg-white text-slate-900 shadow-xs"
+                : "text-slate-500 hover:text-slate-900"
+            }`}
+          >
+            <Eye className="w-4 h-4 text-[#FF2D01]" />
+            <span>
+              Document Preview {lineItemCount > 1 ? `(${lineItemCount} Pages)` : ""}
+            </span>
+          </button>
         </div>
       </div>
 
@@ -124,42 +168,9 @@ export default function NewCertificatePage({ params }: PageProps) {
         </div>
       )}
 
-      {/* MOBILE VIEW TOGGLE TABS (visible only on < lg screens) */}
-      <div className="flex lg:hidden bg-slate-100 p-1 rounded-2xl border border-slate-200 shadow-2xs">
-        <button
-          type="button"
-          onClick={() => setActiveTab("form")}
-          className={`flex-1 py-2.5 text-xs font-bold rounded-xl transition flex items-center justify-center gap-2 ${
-            activeTab === "form"
-              ? "bg-white text-slate-900 shadow-xs"
-              : "text-slate-500 hover:text-slate-900"
-          }`}
-        >
-          <FileText className="w-4 h-4 text-[#FF2D01]" />
-          <span>Form Editor</span>
-        </button>
-        <button
-          type="button"
-          onClick={() => setActiveTab("preview")}
-          className={`flex-1 py-2.5 text-xs font-bold rounded-xl transition flex items-center justify-center gap-2 ${
-            activeTab === "preview"
-              ? "bg-white text-slate-900 shadow-xs"
-              : "text-slate-500 hover:text-slate-900"
-          }`}
-        >
-          <Eye className="w-4 h-4 text-[#FF2D01]" />
-          <span>Live Preview</span>
-        </button>
-      </div>
-
-      {/* TWO PANEL DESKTOP / RESPONSIVE MOBILE VIEW */}
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
-        {/* FORM PANEL (Visible when activeTab === 'form' on mobile; 5 cols on lg) */}
-        <div
-          className={`${
-            activeTab === "form" ? "block" : "hidden"
-          } lg:block lg:col-span-5 space-y-4`}
-        >
+      {/* SINGLE-PANEL FULL-WIDTH VIEW */}
+      {activeTab === "form" ? (
+        <div className="w-full">
           <CertificateFormRenderer
             certificateType={certificateType}
             data={formData}
@@ -169,15 +180,28 @@ export default function NewCertificatePage({ params }: PageProps) {
             onSubmitForApproval={() => handleSave("PENDING_APPROVAL")}
             onCancel={() => router.push(`/${certificateType}`)}
             isSaving={isSaving}
+            onSwitchToPreview={() => setActiveTab("preview")}
           />
         </div>
+      ) : (
+        <div className="w-full space-y-4">
+          <div className="flex items-center justify-between bg-white p-3.5 rounded-2xl border border-slate-200">
+            <div className="flex items-center gap-2">
+              <Eye className="w-4 h-4 text-[#FF2D01]" />
+              <span className="text-xs font-bold text-slate-800">
+                Official Document Preview — {lineItemCount} {lineItemCount === 1 ? "Page" : "Pages"}
+              </span>
+            </div>
+            <button
+              type="button"
+              onClick={() => setActiveTab("form")}
+              className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-bold text-[#FF2D01] bg-[#FF2D01]/10 hover:bg-[#FF2D01]/20 rounded-xl transition"
+            >
+              <FileText className="w-3.5 h-3.5" />
+              <span>Back to Form Editor</span>
+            </button>
+          </div>
 
-        {/* PREVIEW PANEL (Visible when activeTab === 'preview' on mobile; 7 cols on lg, sticky on desktop) */}
-        <div
-          className={`${
-            activeTab === "preview" ? "block" : "hidden"
-          } lg:block lg:col-span-7 lg:sticky lg:top-20 space-y-3`}
-        >
           <ResponsiveCertificatePreview
             title="Document Preview"
             orientation={certificateType === "pneumatic-actuator" ? "landscape" : "portrait"}
@@ -192,7 +216,7 @@ export default function NewCertificatePage({ params }: PageProps) {
             />
           </ResponsiveCertificatePreview>
         </div>
-      </div>
+      )}
     </div>
   );
 }

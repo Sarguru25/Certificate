@@ -18,7 +18,7 @@ interface CertificateHeaderProps {
 export const CertificateHeader: React.FC<CertificateHeaderProps> = ({
   title = "Certificate of Conformity",
   subtitle,
-  certificateNumber = "ZIN2600001",
+  certificateNumber = "ZIC2600001",
   customerName = "-",
   salesOrderNo = "-",
   salesOrderDate,
@@ -64,7 +64,7 @@ export const CertificateHeader: React.FC<CertificateHeaderProps> = ({
 
       {/* Subtitle / Product Bar (rendered only when subtitle is provided) */}
       {subtitle ? (
-        <div className="border-b border-black py-3 text-center font-bold text-[14px] sm:text-[15px] bg-white text-black tracking-wide font-sans">
+        <div className="border-b border-black py-3 text-center font-bold text-[16px] sm:text-[17px] bg-white text-black tracking-wide font-sans">
           {subtitle}
         </div>
       ) : null}
@@ -88,17 +88,17 @@ export const CertificateHeader: React.FC<CertificateHeaderProps> = ({
                 </div>
               </td>
 
-              {/* Box 2: Sale order no & Customer po */}
+              {/* Box 2: SO no & Cus PO */}
               <td className="px-3 py-2.5 font-bold overflow-hidden align-middle">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center truncate mr-2">
-                    <span className="whitespace-nowrap">Sale order no :</span>
+                    <span className="whitespace-nowrap">SO No. :</span>
                     <span className="font-medium ml-1.5 truncate">
                       {salesOrderNo || "-"}{salesOrderDate ? ` DT-${salesOrderDate}` : ""}
                     </span>
                   </div>
                   <div className="flex items-center truncate">
-                    <span className="whitespace-nowrap">Customer po :</span>
+                    <span className="whitespace-nowrap">Cus PO :</span>
                     <span className="font-medium ml-1.5 truncate">
                       {customerPO || "-"}{customerPODate ? ` DT-${customerPODate}` : ""}
                     </span>
@@ -111,9 +111,9 @@ export const CertificateHeader: React.FC<CertificateHeaderProps> = ({
               {/* Box 3: Certificate Number */}
               <td className="border-r border-black px-3 py-2.5 font-bold overflow-hidden align-middle">
                 <div className="flex items-center">
-                  <span className="whitespace-nowrap uppercase">CERTIFICATE NO:</span>
+                  <span className="whitespace-nowrap">Certificate No. :</span>
                   <span className="font-medium ml-2 font-mono">
-                    {certificateNumber || "ZIN2600001"}
+                    {certificateNumber || "ZIC2600001"}
                   </span>
                 </div>
               </td>

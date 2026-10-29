@@ -67,7 +67,7 @@ export default async function DashboardPage({ searchParams }: DashboardProps) {
               type="text"
               name="search"
               defaultValue={search}
-              placeholder="Enter Certificate Number (e.g. ZIN2600001) or Customer Name..."
+              placeholder="Enter Certificate Number (e.g. ZIC2600001) or Customer Name..."
               className="w-full pl-10 pr-10 py-2.5 bg-slate-50 border border-slate-200 rounded-2xl text-xs sm:text-sm text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-[#FF2D01] focus:bg-white transition"
               autoFocus={!!search}
             />

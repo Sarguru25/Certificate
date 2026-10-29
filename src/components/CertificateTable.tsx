@@ -35,7 +35,7 @@ export const CertificateTable: React.FC<CertificateTableProps> = ({ data }) => {
       result: "-",
     },
     {
-      item: "Quentity",
+      item: "Quantity",
       details: quantityDisplay,
       result: "-",
     },

@@ -27,6 +27,7 @@ export async function createUser(data: {
   password: string;
   roleId: string;
   isActive?: boolean;
+  signature?: string;
 }): Promise<IUserDocument> {
   await connectToDatabase();
 
@@ -43,6 +44,7 @@ export async function createUser(data: {
     passwordHash,
     roleId: new mongoose.Types.ObjectId(data.roleId),
     isActive: data.isActive !== undefined ? data.isActive : true,
+    signature: data.signature?.trim() || "",
   });
 
   await newUser.save();
@@ -57,6 +59,7 @@ export async function updateUser(
     password?: string;
     roleId?: string;
     isActive?: boolean;
+    signature?: string;
   }
 ) {
   await connectToDatabase();
@@ -80,6 +83,7 @@ export async function updateUser(
   if (data.name) user.name = data.name.trim();
   if (data.roleId) user.roleId = new mongoose.Types.ObjectId(data.roleId);
   if (data.isActive !== undefined) user.isActive = data.isActive;
+  if (data.signature !== undefined) user.signature = data.signature.trim();
   if (data.password && data.password.trim()) {
     user.passwordHash = await hashPassword(data.password.trim());
   }

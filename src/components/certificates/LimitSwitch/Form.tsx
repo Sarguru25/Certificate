@@ -14,6 +14,7 @@ import {
   ChevronUp,
 } from "lucide-react";
 import { CustomFieldsEditor } from "../common/CustomFieldsEditor";
+import { SignatorySelector } from "../common/SignatorySelector";
 
 interface LimitSwitchFormProps {
   data: LimitSwitchCertificateData;
@@ -29,6 +30,7 @@ interface LimitSwitchFormProps {
 export const LimitSwitchForm: React.FC<LimitSwitchFormProps> = ({
   data,
   onChange,
+  errors = {},
   onSaveDraft,
   onSubmitForApproval,
   onCancel,
@@ -418,75 +420,7 @@ export const LimitSwitchForm: React.FC<LimitSwitchFormProps> = ({
               )}
             </div>
 
-            {/* TEST 2: Mechanical Operation */}
-            <div
-              className={`p-3.5 rounded-xl border transition ${
-                isTestEnabled("mechanicalOperation")
-                  ? "bg-slate-50/80 border-slate-200"
-                  : "bg-slate-100/60 border-slate-200/60 opacity-60"
-              }`}
-            >
-              <div className="flex items-center justify-between mb-2">
-                <label className="flex items-center gap-2 cursor-pointer">
-                  <input
-                    type="checkbox"
-                    checked={isTestEnabled("mechanicalOperation")}
-                    onChange={(e) => handleTestToggle("mechanicalOperation", e.target.checked)}
-                    className="w-4 h-4 text-[#FF2D01] rounded border-slate-300 focus:ring-[#FF2D01] cursor-pointer"
-                  />
-                  <span className="text-xs font-bold text-slate-800">
-                    2. Mechanical Operation
-                  </span>
-                </label>
-                {!isTestEnabled("mechanicalOperation") && (
-                  <span className="text-[11px] font-semibold text-slate-500 bg-slate-200/80 px-2 py-0.5 rounded">
-                    Omitted from certificate
-                  </span>
-                )}
-              </div>
-
-              {isTestEnabled("mechanicalOperation") && (
-                <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-1">
-                  <div>
-                    <label className="block text-[11px] font-semibold text-slate-600 mb-1">
-                      Technical Details (Criteria)
-                    </label>
-                    <input
-                      type="text"
-                      value={data.mechanicalOperationCriteria ?? "Manual actuation of lever"}
-                      onChange={(e) => handleChange("mechanicalOperationCriteria", e.target.value)}
-                      className="w-full text-xs border border-slate-300 rounded-lg px-2.5 py-1.5 outline-none focus:ring-1 focus:ring-[#FF2D01]"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-[11px] font-semibold text-slate-600 mb-1">
-                      Measured Value
-                    </label>
-                    <input
-                      type="text"
-                      value={data.mechanicalOperationMeasured ?? "Smooth"}
-                      onChange={(e) => handleChange("mechanicalOperationMeasured", e.target.value)}
-                      className="w-full text-xs border border-slate-300 rounded-lg px-2.5 py-1.5 outline-none focus:ring-1 focus:ring-[#FF2D01]"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-[11px] font-semibold text-slate-600 mb-1">
-                      Pass / Fail
-                    </label>
-                    <select
-                      value={data.mechanicalOperationResult ?? "Pass"}
-                      onChange={(e) => handleChange("mechanicalOperationResult", e.target.value)}
-                      className="w-full text-xs border border-slate-300 rounded-lg px-2.5 py-1.5 outline-none focus:ring-1 focus:ring-[#FF2D01] bg-white cursor-pointer font-bold"
-                    >
-                      <option value="Pass">Pass</option>
-                      <option value="Fail">Fail</option>
-                    </select>
-                  </div>
-                </div>
-              )}
-            </div>
-
-            {/* TEST 3: Contact Functionality Test */}
+            {/* TEST 2: Contact Functionality Test */}
             <div
               className={`p-3.5 rounded-xl border transition ${
                 isTestEnabled("contactFunctionality")
@@ -503,7 +437,7 @@ export const LimitSwitchForm: React.FC<LimitSwitchFormProps> = ({
                     className="w-4 h-4 text-[#FF2D01] rounded border-slate-300 focus:ring-[#FF2D01] cursor-pointer"
                   />
                   <span className="text-xs font-bold text-slate-800">
-                    3. Contact Functionality Test
+                    2. Contact Functionality Test
                   </span>
                 </label>
                 {!isTestEnabled("contactFunctionality") && (
@@ -587,32 +521,26 @@ export const LimitSwitchForm: React.FC<LimitSwitchFormProps> = ({
         </button>
 
         {openSections.verification && (
-          <div className="p-4 grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <div>
-              <label className="block text-xs font-semibold text-slate-700 mb-1">
-                Performed By <span className="text-red-500">*</span>
-              </label>
-              <input
-                type="text"
-                value={data.witnessedBy ?? ""}
-                onChange={(e) => handleChange("witnessedBy", e.target.value)}
-                placeholder="SIVAGANESHAN.V.A"
-                className="w-full text-sm border border-slate-300 rounded-xl px-3 py-2 outline-none focus:ring-2 focus:ring-[#FF2D01]"
-              />
-            </div>
-
-            <div>
-              <label className="block text-xs font-semibold text-slate-700 mb-1">
-                Verified By <span className="text-red-500">*</span>
-              </label>
-              <input
-                type="text"
-                value={data.verifiedBy ?? ""}
-                onChange={(e) => handleChange("verifiedBy", e.target.value)}
-                placeholder="KARTHIKEYAN.A"
-                className="w-full text-sm border border-slate-300 rounded-xl px-3 py-2 outline-none focus:ring-2 focus:ring-[#FF2D01]"
-              />
-            </div>
+          <div className="p-4">
+            <SignatorySelector
+              witnessedBy={data.witnessedBy}
+              verifiedBy={data.verifiedBy}
+              witnessSignatureUrl={data.witnessSignatureUrl}
+              verifiedSignatureUrl={data.verifiedSignatureUrl}
+              onChangeWitnessedBy={(name, sigUrl) => {
+                handleChange("witnessedBy", name);
+                if (sigUrl !== undefined) {
+                  handleChange("witnessSignatureUrl", sigUrl);
+                }
+              }}
+              onChangeVerifiedBy={(name, sigUrl) => {
+                handleChange("verifiedBy", name);
+                if (sigUrl !== undefined) {
+                  handleChange("verifiedSignatureUrl", sigUrl);
+                }
+              }}
+              errors={errors}
+            />
           </div>
         )}
       </div>

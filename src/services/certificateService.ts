@@ -1,6 +1,11 @@
 import mongoose from "mongoose";
 import { Certificate, ICertificateDocument } from "@/models/Certificate";
-import { generateCertificateNumber } from "@/services/certificateNumberService";
+import { CertificateSequence } from "@/models/CertificateSequence";
+import {
+  generateCertificateNumber,
+  getPageCertificateNumber,
+  calculateValveFunctionalTestPages,
+} from "@/services/certificateNumberService";
 import { submitCertificateForApproval } from "@/services/approvalService";
 import { CertificateType, CertificateStatus } from "@/types/certificate";
 import { SessionUser } from "@/types/auth";
@@ -30,11 +35,24 @@ export async function createCertificate(
 ): Promise<ICertificateDocument> {
   await connectToDatabase();
 
-  // Atomically generate the official certificate number
-  const certificateNumber = await generateCertificateNumber(input.certificateType);
+  const lineItems = (input.certificateData as { lineItems?: unknown[] })?.lineItems;
+  const pageCountInput =
+    input.certificateType === "valve-functional-test"
+      ? calculateValveFunctionalTestPages(input.certificateData)
+      : Array.isArray(lineItems) && lineItems.length > 0
+        ? lineItems.length
+        : 1;
+
+  // Atomically generate the official certificate number range reserving required page slots
+  const certNumberResult = await generateCertificateNumber(input.certificateType, pageCountInput);
+  const certificateNumber = certNumberResult.certificateNumber;
+  const lastCertificateNumber = certNumberResult.lastCertificateNumber;
+  const pageCount = certNumberResult.pageCount;
 
   const newCert = new Certificate({
     certificateNumber,
+    lastCertificateNumber,
+    pageCount,
     certificateType: input.certificateType,
     revision: 0,
     status: "DRAFT",
@@ -51,7 +69,10 @@ export async function createCertificate(
         performedBy: new mongoose.Types.ObjectId(user.id),
         performedByName: user.name,
         performedAt: new Date(),
-        note: `Certificate draft created with number ${certificateNumber}`,
+        note:
+          pageCount > 1
+            ? `Certificate draft created for ${pageCount} pages (${certificateNumber} - ${lastCertificateNumber})`
+            : `Certificate draft created with number ${certificateNumber}`,
       },
     ],
   });
@@ -104,6 +125,33 @@ export async function updateCertificate(
 
   certificate.certificateData = certificateData;
   certificate.updatedBy = new mongoose.Types.ObjectId(user.id);
+
+  // Recalculate pageCount and lastCertificateNumber if multi-page
+  const lineItems = (certificateData as { lineItems?: unknown[] })?.lineItems;
+  const newPageCount =
+    certificate.certificateType === "valve-functional-test"
+      ? calculateValveFunctionalTestPages(certificateData)
+      : Array.isArray(lineItems) && lineItems.length > 0
+        ? lineItems.length
+        : 1;
+
+  certificate.pageCount = newPageCount;
+  certificate.lastCertificateNumber = getPageCertificateNumber(certificate.certificateNumber, newPageCount - 1);
+
+  // If the new end certificate number extends the sequence, bump CertificateSequence so future certs won't collide
+  const currentYear = new Date().getFullYear();
+  const yyStr = String(currentYear).slice(-2);
+  const match = certificate.lastCertificateNumber?.match(new RegExp(`^(?:ZIC|ZIN)${yyStr}(\\d{5})$`));
+  if (match) {
+    const endSeq = parseInt(match[1], 10);
+    if (!isNaN(endSeq)) {
+      await CertificateSequence.findOneAndUpdate(
+        { certificateType: "ALL", year: currentYear, month: 0 },
+        { $max: { lastSequence: endSeq } }
+      );
+    }
+  }
+
   certificate.approvalHistory.push({
     action: "UPDATED",
     performedBy: new mongoose.Types.ObjectId(user.id),
@@ -159,12 +207,26 @@ export async function cloneCertificate(
     throw new Error("Source certificate not found");
   }
 
-  const certificateNumber = await generateCertificateNumber(
-    source.certificateType as CertificateType
+  const lineItems = (source.certificateData as { lineItems?: unknown[] })?.lineItems;
+  const pageCountInput =
+    source.certificateType === "valve-functional-test"
+      ? calculateValveFunctionalTestPages(source.certificateData)
+      : Array.isArray(lineItems) && lineItems.length > 0
+        ? lineItems.length
+        : 1;
+
+  const certNumberResult = await generateCertificateNumber(
+    source.certificateType as CertificateType,
+    pageCountInput
   );
+  const certificateNumber = certNumberResult.certificateNumber;
+  const lastCertificateNumber = certNumberResult.lastCertificateNumber;
+  const pageCount = certNumberResult.pageCount;
 
   const cloned = new Certificate({
     certificateNumber,
+    lastCertificateNumber,
+    pageCount,
     certificateType: source.certificateType,
     revision: 0,
     status: "DRAFT",
@@ -181,7 +243,10 @@ export async function cloneCertificate(
         performedBy: new mongoose.Types.ObjectId(user.id),
         performedByName: user.name,
         performedAt: new Date(),
-        note: `Certificate cloned from ${source.certificateNumber} as new draft ${certificateNumber}`,
+        note:
+          pageCount > 1
+            ? `Certificate cloned from ${source.certificateNumber} as new draft range (${certificateNumber} - ${lastCertificateNumber})`
+            : `Certificate cloned from ${source.certificateNumber} as new draft ${certificateNumber}`,
       },
     ],
   });
@@ -220,6 +285,7 @@ export async function listCertificates(params: ListCertificatesParams) {
     const regex = new RegExp(term, "i");
     query.$or = [
       { certificateNumber: regex },
+      { lastCertificateNumber: regex },
       { "certificateData.customerName": regex },
       { "certificateData.salesOrderNo": regex },
       { "certificateData.modelNumber": regex },
@@ -320,6 +386,7 @@ export async function getDashboardStats() {
     "limit-switch": 0,
     "pneumatic-actuator": 0,
     "warranty-certificate": 0,
+    "valve-functional-test": 0,
   };
 
   typeCounts.forEach((item) => {

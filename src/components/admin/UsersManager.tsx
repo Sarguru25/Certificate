@@ -16,6 +16,13 @@ interface UserItem {
     permissions: string[];
   };
   isActive: boolean;
+  signature?: string;
+}
+
+interface SignatureItem {
+  filename: string;
+  name: string;
+  url: string;
 }
 
 interface RoleItem {
@@ -35,6 +42,19 @@ export const UsersManager: React.FC<UsersManagerProps> = ({
 }) => {
   const router = useRouter();
   const [users, setUsers] = useState<UserItem[]>(initialUsers);
+  const [availableSignatures, setAvailableSignatures] = useState<SignatureItem[]>([]);
+
+  // Fetch available signature files from public/signature
+  React.useEffect(() => {
+    fetch("/api/signatures")
+      .then((res) => res.json())
+      .then((data) => {
+        if (data.signatures) {
+          setAvailableSignatures(data.signatures);
+        }
+      })
+      .catch((err) => console.error("Error loading signatures:", err));
+  }, []);
 
   // Success / Error alerts
   const [successMsg, setSuccessMsg] = useState<string | null>(null);
@@ -46,6 +66,7 @@ export const UsersManager: React.FC<UsersManagerProps> = ({
   const [newEmail, setNewEmail] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const [newRoleId, setNewRoleId] = useState(roles[0]?._id || "");
+  const [newSignature, setNewSignature] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   // Edit user modal state
@@ -55,6 +76,7 @@ export const UsersManager: React.FC<UsersManagerProps> = ({
   const [editEmail, setEditEmail] = useState("");
   const [editPassword, setEditPassword] = useState("");
   const [editRoleId, setEditRoleId] = useState("");
+  const [editSignature, setEditSignature] = useState("");
   const [editIsActive, setEditIsActive] = useState(true);
   const [isEditing, setIsEditing] = useState(false);
 
@@ -91,6 +113,7 @@ export const UsersManager: React.FC<UsersManagerProps> = ({
           email: newEmail,
           password: newPassword,
           roleId: newRoleId,
+          signature: newSignature || "",
         }),
       });
 
@@ -102,6 +125,7 @@ export const UsersManager: React.FC<UsersManagerProps> = ({
       setNewName("");
       setNewEmail("");
       setNewPassword("");
+      setNewSignature("");
       await refreshUsersList();
     } catch (err: unknown) {
       setErrorMsg(err instanceof Error ? err.message : "Error creating user");
@@ -119,6 +143,7 @@ export const UsersManager: React.FC<UsersManagerProps> = ({
     setEditEmail(user.email);
     setEditPassword("");
     setEditRoleId(user.roleId?._id || roles[0]?._id || "");
+    setEditSignature(user.signature || "");
     setEditIsActive(user.isActive);
     setEditModalOpen(true);
   };
@@ -136,12 +161,14 @@ export const UsersManager: React.FC<UsersManagerProps> = ({
         email: string;
         roleId: string;
         isActive: boolean;
+        signature: string;
         password?: string;
       } = {
         name: editName,
         email: editEmail,
         roleId: editRoleId,
         isActive: editIsActive,
+        signature: editSignature || "",
       };
 
       if (editPassword && editPassword.trim().length >= 6) {
@@ -261,6 +288,7 @@ export const UsersManager: React.FC<UsersManagerProps> = ({
             setNewEmail("");
             setNewPassword("");
             setNewRoleId(roles[0]?._id || "");
+            setNewSignature("");
             setCreateModalOpen(true);
           }}
           className="inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl text-sm font-bold text-white bg-[#FF2D01] hover:bg-[#e02800] transition shadow-xs"
@@ -279,6 +307,7 @@ export const UsersManager: React.FC<UsersManagerProps> = ({
                 <th className="py-3.5 px-4">Employee Name</th>
                 <th className="py-3.5 px-4">Corporate Email</th>
                 <th className="py-3.5 px-4">Assigned Role</th>
+                <th className="py-3.5 px-4">Assigned Signature</th>
                 <th className="py-3.5 px-4">Account Status</th>
                 <th className="py-3.5 px-4 text-right">Actions</th>
               </tr>
@@ -299,6 +328,30 @@ export const UsersManager: React.FC<UsersManagerProps> = ({
                         <Shield className="w-3 h-3" />
                         <span>{roleName}</span>
                       </span>
+                    </td>
+                    <td className="py-3.5 px-4">
+                      {u.signature ? (
+                        <div className="flex items-center gap-2">
+                          <div className="h-7 w-16 bg-slate-50 border border-slate-200 rounded flex items-center justify-center p-0.5 overflow-hidden">
+                            {/* eslint-disable-next-line @next/next/no-img-element */}
+                            <img
+                              src={u.signature}
+                              alt="Signature"
+                              className="max-h-full max-w-full object-contain mix-blend-multiply"
+                            />
+                          </div>
+                          <span
+                            className="text-[11px] font-mono text-slate-500 truncate max-w-[110px]"
+                            title={u.signature}
+                          >
+                            {u.signature.split("/").pop()}
+                          </span>
+                        </div>
+                      ) : (
+                        <span className="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-medium bg-slate-100 text-slate-400">
+                          No sign
+                        </span>
+                      )}
                     </td>
                     <td className="py-3.5 px-4">
                       {u.isActive ? (
@@ -424,6 +477,52 @@ export const UsersManager: React.FC<UsersManagerProps> = ({
             </select>
           </div>
 
+          <div>
+            <label className="block text-xs font-semibold text-slate-700 mb-1">
+              Digital Signature Image
+            </label>
+            <select
+              value={newSignature}
+              onChange={(e) => setNewSignature(e.target.value)}
+              className="w-full text-sm border border-slate-300 rounded-xl px-3 py-2 outline-none focus:ring-2 focus:ring-[#FF2D01] bg-white cursor-pointer"
+            >
+              <option value="">-- No Signature Assigned --</option>
+              {availableSignatures.map((sig) => (
+                <option key={sig.url} value={sig.url}>
+                  {sig.filename} ({sig.name})
+                </option>
+              ))}
+            </select>
+            {newSignature && (
+              <div className="mt-2 p-2.5 bg-slate-50 border border-slate-200 rounded-xl flex items-center justify-between">
+                <div className="flex items-center gap-3">
+                  <div className="h-10 w-24 bg-white border border-slate-200 rounded-lg p-1 flex items-center justify-center">
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img
+                      src={newSignature}
+                      alt="Signature Preview"
+                      className="max-h-full max-w-full object-contain mix-blend-multiply"
+                    />
+                  </div>
+                  <div>
+                    <p className="text-xs font-bold text-slate-700">Assigned Signature</p>
+                    <p className="text-[11px] font-mono text-slate-500">{newSignature}</p>
+                  </div>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => setNewSignature("")}
+                  className="text-xs text-red-500 hover:text-red-700 font-semibold"
+                >
+                  Clear
+                </button>
+              </div>
+            )}
+            <p className="text-[11px] text-slate-400 mt-1">
+              Add signature image files in <code className="bg-slate-100 px-1 py-0.5 rounded text-[10px] font-mono">public/signature</code> folder to appear here.
+            </p>
+          </div>
+
           <div className="flex items-center justify-end gap-3 pt-4 border-t border-slate-100">
             <button
               type="button"
@@ -494,6 +593,52 @@ export const UsersManager: React.FC<UsersManagerProps> = ({
                 </option>
               ))}
             </select>
+          </div>
+
+          <div>
+            <label className="block text-xs font-semibold text-slate-700 mb-1">
+              Digital Signature Image
+            </label>
+            <select
+              value={editSignature}
+              onChange={(e) => setEditSignature(e.target.value)}
+              className="w-full text-sm border border-slate-300 rounded-xl px-3 py-2 outline-none focus:ring-2 focus:ring-[#FF2D01] bg-white cursor-pointer"
+            >
+              <option value="">-- No Signature Assigned --</option>
+              {availableSignatures.map((sig) => (
+                <option key={sig.url} value={sig.url}>
+                  {sig.filename} ({sig.name})
+                </option>
+              ))}
+            </select>
+            {editSignature && (
+              <div className="mt-2 p-2.5 bg-slate-50 border border-slate-200 rounded-xl flex items-center justify-between">
+                <div className="flex items-center gap-3">
+                  <div className="h-10 w-24 bg-white border border-slate-200 rounded-lg p-1 flex items-center justify-center">
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img
+                      src={editSignature}
+                      alt="Signature Preview"
+                      className="max-h-full max-w-full object-contain mix-blend-multiply"
+                    />
+                  </div>
+                  <div>
+                    <p className="text-xs font-bold text-slate-700">Assigned Signature</p>
+                    <p className="text-[11px] font-mono text-slate-500">{editSignature}</p>
+                  </div>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => setEditSignature("")}
+                  className="text-xs text-red-500 hover:text-red-700 font-semibold"
+                >
+                  Clear
+                </button>
+              </div>
+            )}
+            <p className="text-[11px] text-slate-400 mt-1">
+              Add signature image files in <code className="bg-slate-100 px-1 py-0.5 rounded text-[10px] font-mono">public/signature</code> folder to appear here.
+            </p>
           </div>
 
           <div>

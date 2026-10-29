@@ -3,7 +3,8 @@ export type CertificateType =
   | "electric-actuator"
   | "limit-switch"
   | "pneumatic-actuator"
-  | "warranty-certificate";
+  | "warranty-certificate"
+  | "valve-functional-test";
 
 export type CertificateStatus =
   | "DRAFT"
@@ -195,6 +196,7 @@ export interface WarrantyCertificateData {
   customerPO?: string;
   customerPODate?: string;
   certificateDate?: string;
+  date?: string;
   testingLocation?: string;
 
   invoiceNo?: string;
@@ -207,6 +209,12 @@ export interface WarrantyCertificateData {
   warrantyNote?: string;
   serialNumbers?: string;
   declarationText?: string;
+  termsOfWarranty?: string[];
+  companyName?: string;
+  companyAddress?: string;
+  companyWebsite?: string;
+  companyEmail?: string;
+  gstNo?: string;
 
   issuedBy?: string;
   authorizedSignatory?: string;
@@ -260,12 +268,160 @@ export interface PneumaticActuatorCertificateData {
   customFields?: SectionCustomFields;
 }
 
+export interface EquipmentParameterField {
+  id: string;
+  label: string;
+  value: string;
+  enabled: boolean;
+}
+
+export interface PneumaticStrokeItem {
+  id: string;
+  strokeNumber?: number;
+  openTime: string;
+  closeTime: string;
+  result: string;
+  remarks: string;
+}
+
+export interface SovElectricalTestItem {
+  method: string;
+  media: string;
+  voltage: string;
+  openTime: string;
+  closeTime: string;
+  result: string;
+  remarks: string;
+}
+
+export interface ValveFunctionalTestLineItem {
+  id?: string;
+  sNo: number | string;
+  tagNo: string;
+  actuatorSerialNo?: string;
+
+  // Stroke cycles (Stroke 1, 2, 3)
+  stroke1Open?: string;
+  stroke1Close?: string;
+  stroke2Open?: string;
+  stroke2Close?: string;
+  stroke3Open?: string;
+  stroke3Close?: string;
+
+  // Overall valve test result
+  valveFunction?: string;
+
+  // Optional specifications (inherited from product group or overridden per item)
+  valveType?: string;
+  valveSize?: string;
+  moc?: string;
+  endConnection?: string;
+  actType?: string;
+  model?: string;
+  failPosition?: string;
+
+  // Accessories with select/ignore checkboxes
+  hasLsb?: boolean;
+  lsbModelNo?: string;
+  lsbFunction?: string;
+
+  hasSov?: boolean;
+  sovModelNo?: string;
+  sovFunction?: string;
+
+  hasPositioner?: boolean;
+  posinier?: string;
+  poFunction?: string;
+
+  hasAfr?: boolean;
+  afrModelNo?: string;
+  afrFunction?: string;
+}
+
+export interface ValveFunctionalTestProductGroup {
+  id: string;
+  groupName?: string;
+  valveType: string;
+  valveSize: string;
+  endConnection: string;
+  pressureRating?: string;
+  moc?: string;
+  actType: string;
+  actuatorModel: string;
+  failPosition: string;
+
+  // Accessories with select/ignore checkboxes
+  hasLsb?: boolean;
+  lsbModelNo?: string;
+  lsbFunction?: string;
+
+  hasSov?: boolean;
+  sovModelNo?: string;
+  sovFunction?: string;
+
+  hasPositioner?: boolean;
+  posinier?: string;
+  poFunction?: string;
+
+  hasAfr?: boolean;
+  afrModelNo?: string;
+  afrFunction?: string;
+
+  // Common Functional results
+  hasValve?: boolean;
+  valveFunction?: string;
+  hasActuator?: boolean;
+  actuatorFunction?: string;
+  valveAssemblyFunction?: string;
+
+  // Line items for this group (max 15 per page in PDF)
+  items: ValveFunctionalTestLineItem[];
+}
+
+export interface ValveFunctionalTestCertificateData {
+  customerName: string;
+  customerPO: string;
+  salesOrderNo: string;
+  placeOfTest?: string;
+  dateOfTest: string;
+  testedBy: string;
+
+  // Identical Product Groups (each group contains its shared specifications and items)
+  productGroups?: ValveFunctionalTestProductGroup[];
+
+  // Flat line items array (kept synchronized for backward compatibility and search)
+  lineItems: ValveFunctionalTestLineItem[];
+
+  declarationText?: string;
+  companyName?: string;
+  companyAddress?: string;
+
+  // Signatures
+  witnessedBy?: string;
+  verifiedBy?: string;
+  witnessSignatureUrl?: string;
+  verifiedSignatureUrl?: string;
+  showSignatures?: boolean;
+  status?: string;
+
+  // Legacy fields for backward compatibility
+  equipmentParameters?: EquipmentParameterField[];
+  valveType?: string;
+  valveSizeAndClass?: string;
+  valveOperation?: string;
+  pneumaticMedia?: string;
+  pneumaticPressure?: string;
+  pneumaticStrokes?: PneumaticStrokeItem[];
+  sovElectricalTest?: SovElectricalTestItem;
+}
+
 export type AnyCertificateData =
   | SolenoidValveCertificateData
   | ElectricActuatorCertificateData
   | LimitSwitchCertificateData
   | WarrantyCertificateData
-  | PneumaticActuatorCertificateData;
+  | PneumaticActuatorCertificateData
+  | ValveFunctionalTestCertificateData;
 
 export type CertificateErrors = Record<string, string>;
 
@@ -302,6 +458,8 @@ export interface CertificateCreator {
 export interface ICertificate {
   _id: string;
   certificateNumber: string;
+  lastCertificateNumber?: string;
+  pageCount?: number;
   certificateType: CertificateType;
   revision: number;
   parentCertificateId?: string;

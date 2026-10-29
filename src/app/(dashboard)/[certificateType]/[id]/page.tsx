@@ -9,6 +9,7 @@ import { CertificateRenderer } from "@/components/certificates/CertificateRender
 import { ConfirmDialog } from "@/components/ui/ConfirmDialog";
 import { generateCertificatePdf, printCertificate } from "@/lib/pdfGenerator";
 import { ICertificate, AuditEntry } from "@/types/certificate";
+import { calculateValveFunctionalTestPages } from "@/lib/certificatePagination";
 import { SessionUser } from "@/types/auth";
 import {
   ArrowLeft,
@@ -54,6 +55,8 @@ export default function CertificateViewPage({ params }: PageProps) {
 
   // Zoom control state
   const [zoomLevel, setZoomLevel] = useState<number>(0.85);
+  const [activePageIndex, setActivePageIndex] = useState<number>(0);
+  const [viewMode, setViewMode] = useState<"all" | "single">("all");
 
   const fetchData = useCallback(async () => {
     try {
@@ -192,12 +195,12 @@ export default function CertificateViewPage({ params }: PageProps) {
 
   const canApprove =
     isApproverUser &&
-    certificate.status !== "APPROVED" &&
+    certificate.status === "PENDING_APPROVAL" &&
     !hasAlreadyApproved;
 
   const canReject =
     isRejecterUser &&
-    certificate.status !== "APPROVED";
+    certificate.status === "PENDING_APPROVAL";
 
   const canEdit =
     certificate.status === "DRAFT" || certificate.status === "REJECTED";
@@ -355,7 +358,9 @@ export default function CertificateViewPage({ params }: PageProps) {
           <div>
             <div className="flex items-center gap-2">
               <span className="font-mono font-black text-xl text-slate-900">
-                {certificate.certificateNumber}
+                {certificate.lastCertificateNumber && certificate.lastCertificateNumber !== certificate.certificateNumber
+                  ? `${certificate.certificateNumber} - ${certificate.lastCertificateNumber}`
+                  : certificate.certificateNumber}
               </span>
               <StatusBadge status={certificate.status} size="md" />
             </div>
@@ -505,58 +510,143 @@ export default function CertificateViewPage({ params }: PageProps) {
 
       {/* TWO-COLUMN CONTENT: PREVIEW ON LEFT, METADATA & WORKFLOW ON RIGHT */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
-        {/* DOCUMENT PREVIEW (7 cols on lg) */}
+        {/* DOCUMENT PREVIEW (8 cols on lg) */}
         <div className="lg:col-span-8 space-y-3">
-          {/* Zoom toolbar */}
-          <div className="flex items-center justify-between px-3 py-2 bg-white rounded-xl border border-slate-200 text-xs">
-            <span className="font-bold text-slate-700 flex items-center gap-1.5">
-              <span>Official Document Layout</span>
-            </span>
+          {/* Zoom & Page toolbar */}
+          {(() => {
+            const certData = certificate.certificateData as Record<string, unknown>;
+            const lineItems = (certData?.lineItems as unknown[]) || [];
+            const totalPages =
+              certificate.certificateType === "valve-functional-test"
+                ? (certificate.pageCount || calculateValveFunctionalTestPages(certData))
+                : Math.max(1, lineItems.length);
+            const isMultiPage = totalPages > 1;
 
-            <div className="flex items-center gap-1 bg-slate-100 p-0.5 rounded-lg border border-slate-200">
-              <button
-                type="button"
-                onClick={() => setZoomLevel((prev) => Math.max(prev - 0.1, 0.45))}
-                className="p-1 hover:bg-white rounded text-slate-600"
-                title="Zoom out"
-              >
-                <ZoomOut className="w-3.5 h-3.5" />
-              </button>
-              <span className="px-1.5 font-mono text-[11px] text-slate-600 min-w-[38px] text-center">
-                {Math.round(zoomLevel * 100)}%
-              </span>
-              <button
-                type="button"
-                onClick={() => setZoomLevel((prev) => Math.min(prev + 0.1, 1.2))}
-                className="p-1 hover:bg-white rounded text-slate-600"
-                title="Zoom in"
-              >
-                <ZoomIn className="w-3.5 h-3.5" />
-              </button>
-              <button
-                type="button"
-                onClick={() => setZoomLevel(0.85)}
-                className="p-1 hover:bg-white rounded text-slate-600 ml-0.5"
-                title="Reset zoom"
-              >
-                <RotateCcw className="w-3 h-3" />
-              </button>
-            </div>
-          </div>
+            return (
+              <div className="flex flex-wrap items-center justify-between gap-2 px-3 py-2 bg-white rounded-xl border border-slate-200 text-xs">
+                <div className="flex items-center gap-2">
+                  <span className="font-bold text-slate-700 flex items-center gap-1.5">
+                    <span>Official Document Layout</span>
+                  </span>
+                  {isMultiPage && (
+                    <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-[#FF2D01]/10 text-[#FF2D01]">
+                      {totalPages} Pages
+                    </span>
+                  )}
+                </div>
+
+                {/* Multi-page controls if certificate has multiple line items */}
+                {isMultiPage && (
+                  <div className="flex items-center gap-2">
+                    <div className="flex items-center bg-slate-100 p-0.5 rounded-lg border border-slate-200">
+                      <button
+                        type="button"
+                        onClick={() => setViewMode("all")}
+                        className={`px-2 py-0.5 text-[11px] font-bold rounded-md transition ${
+                          viewMode === "all"
+                            ? "bg-white text-slate-900 shadow-2xs"
+                            : "text-slate-500 hover:text-slate-900"
+                        }`}
+                      >
+                        All Pages
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => setViewMode("single")}
+                        className={`px-2 py-0.5 text-[11px] font-bold rounded-md transition ${
+                          viewMode === "single"
+                            ? "bg-white text-slate-900 shadow-2xs"
+                            : "text-slate-500 hover:text-slate-900"
+                        }`}
+                      >
+                        Single Page
+                      </button>
+                    </div>
+
+                    {viewMode === "single" && (
+                      <div className="flex items-center gap-1 bg-slate-100 p-0.5 rounded-lg border border-slate-200">
+                        <button
+                          type="button"
+                          onClick={() => setActivePageIndex((prev) => Math.max(0, prev - 1))}
+                          disabled={activePageIndex === 0}
+                          className="px-1.5 py-0.5 text-slate-600 hover:bg-white rounded disabled:opacity-30"
+                        >
+                          ‹
+                        </button>
+                        <span className="px-1 text-[11px] font-mono font-bold text-slate-700">
+                          {activePageIndex + 1} / {totalPages}
+                        </span>
+                        <button
+                          type="button"
+                          onClick={() =>
+                            setActivePageIndex((prev) => Math.min(totalPages - 1, prev + 1))
+                          }
+                          disabled={activePageIndex >= totalPages - 1}
+                          className="px-1.5 py-0.5 text-slate-600 hover:bg-white rounded disabled:opacity-30"
+                        >
+                          ›
+                        </button>
+                      </div>
+                    )}
+                  </div>
+                )}
+
+                {/* Zoom controls */}
+                <div className="flex items-center gap-1 bg-slate-100 p-0.5 rounded-lg border border-slate-200">
+                  <button
+                    type="button"
+                    onClick={() => setZoomLevel((prev) => Math.max(prev - 0.1, 0.45))}
+                    className="p-1 hover:bg-white rounded text-slate-600"
+                    title="Zoom out"
+                  >
+                    <ZoomOut className="w-3.5 h-3.5" />
+                  </button>
+                  <span className="px-1.5 font-mono text-[11px] text-slate-600 min-w-[38px] text-center">
+                    {Math.round(zoomLevel * 100)}%
+                  </span>
+                  <button
+                    type="button"
+                    onClick={() => setZoomLevel((prev) => Math.min(prev + 0.1, 1.2))}
+                    className="p-1 hover:bg-white rounded text-slate-600"
+                    title="Zoom in"
+                  >
+                    <ZoomIn className="w-3.5 h-3.5" />
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setZoomLevel(0.85)}
+                    className="p-1 hover:bg-white rounded text-slate-600 ml-0.5"
+                    title="Reset zoom"
+                  >
+                    <RotateCcw className="w-3 h-3" />
+                  </button>
+                </div>
+              </div>
+            );
+          })()}
 
           {(() => {
             const isLandscape = certificate.certificateType === "pneumatic-actuator";
             const baseWidth = isLandscape ? 1123 : 794;
             const baseHeight = isLandscape ? 794 : 1123;
+            const certData = certificate.certificateData as Record<string, unknown>;
+            const lineItems = (certData?.lineItems as unknown[]) || [];
+            const totalPages =
+              certificate.certificateType === "valve-functional-test"
+                ? (certificate.pageCount || calculateValveFunctionalTestPages(certData))
+                : Math.max(1, lineItems.length);
+            const renderedPagesCount = viewMode === "all" ? totalPages : 1;
+            const totalHeight = (baseHeight + 24) * renderedPagesCount;
+
             return (
-              <div className="bg-slate-200/70 rounded-3xl border border-slate-200 overflow-auto p-2 sm:p-8 shadow-inner min-h-[500px]">
+              <div className="bg-slate-200/70 rounded-3xl border border-slate-200 overflow-auto p-2 sm:p-8 shadow-inner min-h-[500px] max-h-[85vh]">
                 <div
                   className="mx-auto flex-shrink-0"
                   style={{
                     width: `${Math.round(baseWidth * zoomLevel)}px`,
-                    height: `${Math.round(baseHeight * zoomLevel)}px`,
+                    height: `${Math.round(totalHeight * zoomLevel)}px`,
                     minWidth: `${Math.round(baseWidth * zoomLevel)}px`,
-                    minHeight: `${Math.round(baseHeight * zoomLevel)}px`,
+                    minHeight: `${Math.round(totalHeight * zoomLevel)}px`,
                     position: "relative",
                   }}
                 >
@@ -577,6 +667,8 @@ export default function CertificateViewPage({ params }: PageProps) {
                       certificateNumber={certificate.certificateNumber}
                       revision={certificate.revision}
                       status={certificate.status}
+                      activePageIndex={activePageIndex}
+                      showAllPages={viewMode === "all"}
                     />
                   </div>
                 </div>
@@ -614,18 +706,41 @@ export default function CertificateViewPage({ params }: PageProps) {
                   {(certificate.certificateData as unknown as Record<string, string>)?.salesOrderNo || "-"}
                 </span>
               </div>
-              <div className="bg-slate-50 p-2.5 rounded-xl border border-slate-100/80">
-                <span className="text-[10px] uppercase font-bold text-slate-400 block">Model No</span>
-                <span className="font-semibold text-slate-800 font-mono truncate block mt-0.5" title={(certificate.certificateData as unknown as Record<string, string>)?.modelNumber}>
-                  {(certificate.certificateData as unknown as Record<string, string>)?.modelNumber || "-"}
-                </span>
-              </div>
-              <div className="bg-slate-50 p-2.5 rounded-xl border border-slate-100/80">
-                <span className="text-[10px] uppercase font-bold text-slate-400 block">Quantity</span>
-                <span className="font-semibold text-slate-800 truncate block mt-0.5">
-                  {(certificate.certificateData as unknown as Record<string, string>)?.quantity ? `${(certificate.certificateData as unknown as Record<string, string>).quantity} Nos` : "-"}
-                </span>
-              </div>
+              {certificate.certificateType === "valve-functional-test" ? (
+                <>
+                  <div className="bg-slate-50 p-2.5 rounded-xl border border-slate-100/80">
+                    <span className="text-[10px] uppercase font-bold text-slate-400 block">Total Items</span>
+                    <span className="font-semibold text-slate-800 font-mono truncate block mt-0.5">
+                      {((certificate.certificateData as unknown as { lineItems?: unknown[] })?.lineItems?.length || 1)} Valves
+                    </span>
+                  </div>
+                  <div className="bg-slate-50 p-2.5 rounded-xl border border-slate-100/80">
+                    <span className="text-[10px] uppercase font-bold text-slate-400 block">
+                      {certificate.lastCertificateNumber && certificate.lastCertificateNumber !== certificate.certificateNumber ? "Serial Range" : "PDF Pages"}
+                    </span>
+                    <span className="font-semibold text-slate-800 font-mono truncate block mt-0.5">
+                      {certificate.lastCertificateNumber && certificate.lastCertificateNumber !== certificate.certificateNumber
+                        ? `${certificate.certificateNumber} - ${certificate.lastCertificateNumber}`
+                        : `${certificate.pageCount || 1} Pages`}
+                    </span>
+                  </div>
+                </>
+              ) : (
+                <>
+                  <div className="bg-slate-50 p-2.5 rounded-xl border border-slate-100/80">
+                    <span className="text-[10px] uppercase font-bold text-slate-400 block">Model No</span>
+                    <span className="font-semibold text-slate-800 font-mono truncate block mt-0.5" title={(certificate.certificateData as unknown as Record<string, string>)?.modelNumber}>
+                      {(certificate.certificateData as unknown as Record<string, string>)?.modelNumber || "-"}
+                    </span>
+                  </div>
+                  <div className="bg-slate-50 p-2.5 rounded-xl border border-slate-100/80">
+                    <span className="text-[10px] uppercase font-bold text-slate-400 block">Quantity</span>
+                    <span className="font-semibold text-slate-800 truncate block mt-0.5">
+                      {(certificate.certificateData as unknown as Record<string, string>)?.quantity ? `${(certificate.certificateData as unknown as Record<string, string>).quantity} Nos` : "-"}
+                    </span>
+                  </div>
+                </>
+              )}
             </div>
           </div>
 

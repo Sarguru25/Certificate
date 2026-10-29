@@ -30,7 +30,7 @@ const CertificateSequenceSchema = new Schema<ICertificateSequenceDocument>(
     prefix: {
       type: String,
       required: true,
-      default: "ZIN",
+      default: "ZIC",
     },
     lastSequence: {
       type: Number,

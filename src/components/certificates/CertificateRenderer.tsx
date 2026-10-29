@@ -9,12 +9,14 @@ import {
   LimitSwitchCertificateData,
   WarrantyCertificateData,
   PneumaticActuatorCertificateData,
+  ValveFunctionalTestCertificateData,
 } from "@/types/certificate";
 import { SolenoidValveTemplate } from "./SolenoidValve/Template";
 import { ElectricActuatorTemplate } from "./ElectricActuator/Template";
 import { LimitSwitchTemplate } from "./LimitSwitch/Template";
 import { WarrantyCertificateTemplate } from "./WarrantyCertificate/Template";
 import { PneumaticActuatorTemplate } from "./PneumaticActuator/Template";
+import { ValveFunctionalTestTemplate } from "./ValveFunctionalTest/Template";
 
 interface CertificateRendererProps {
   certificateType: CertificateType | string;
@@ -22,6 +24,9 @@ interface CertificateRendererProps {
   certificateNumber?: string;
   revision?: number;
   status?: string;
+  activePageIndex?: number;
+  showAllPages?: boolean;
+  onChange?: (newData: any) => void;
 }
 
 export const CertificateRenderer: React.FC<CertificateRendererProps> = ({
@@ -30,6 +35,9 @@ export const CertificateRenderer: React.FC<CertificateRendererProps> = ({
   certificateNumber,
   revision = 0,
   status,
+  activePageIndex,
+  showAllPages = true,
+  onChange,
 }) => {
   switch (certificateType) {
     case "electric-actuator":
@@ -69,6 +77,19 @@ export const CertificateRenderer: React.FC<CertificateRendererProps> = ({
           certificateNumber={certificateNumber}
           revision={revision}
           status={status}
+          onChange={onChange}
+        />
+      );
+
+    case "valve-functional-test":
+      return (
+        <ValveFunctionalTestTemplate
+          data={data as ValveFunctionalTestCertificateData}
+          certificateNumber={certificateNumber}
+          revision={revision}
+          status={status}
+          activePageIndex={activePageIndex}
+          showAllPages={showAllPages}
         />
       );
 

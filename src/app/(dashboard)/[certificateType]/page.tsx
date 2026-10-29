@@ -187,7 +187,9 @@ export default async function CertificateListPage({
                       <div>
                         <div className="flex items-center gap-1.5">
                           <span className="font-mono font-bold text-sm text-slate-900 group-hover:text-[#FF2D01] transition-colors">
-                            {c.certificateNumber}
+                            {c.lastCertificateNumber && c.lastCertificateNumber !== c.certificateNumber
+                              ? `${c.certificateNumber} - ${c.lastCertificateNumber}`
+                              : c.certificateNumber}
                           </span>
                         </div>
                         <div className="text-xs font-bold text-slate-800 mt-1">
@@ -256,7 +258,9 @@ export default async function CertificateListPage({
                     >
                       <td className="py-3.5 px-4">
                         <span className="font-mono font-bold text-slate-900 group-hover:text-[#FF2D01] transition-colors">
-                          {c.certificateNumber}
+                          {c.lastCertificateNumber && c.lastCertificateNumber !== c.certificateNumber
+                            ? `${c.certificateNumber} - ${c.lastCertificateNumber}`
+                            : c.certificateNumber}
                         </span>
                       </td>
                       <td className="py-3.5 px-4 font-semibold text-slate-800 max-w-[220px] truncate">

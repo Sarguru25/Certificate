@@ -10,6 +10,7 @@ import {
   LayoutDashboard,
   FileCheck2,
   FileSpreadsheet,
+  ClipboardCheck,
   Users,
   ShieldAlert,
   LogOut,
@@ -115,7 +116,7 @@ export const AppSidebar: React.FC<AppSidebarProps> = ({ user, onNavigate }) => {
             Certificates
           </div>
           <div className="space-y-1">
-            {CERTIFICATE_TYPE_LIST.map((cert) => {
+            {CERTIFICATE_TYPE_LIST.filter((c) => c.category !== "functional-report").map((cert) => {
               const href = `/${cert.key}`;
               const createHref = `/${cert.key}/new`;
               const active = isActive(href);
@@ -143,6 +144,56 @@ export const AppSidebar: React.FC<AppSidebarProps> = ({ user, onNavigate }) => {
                     href={createHref}
                     onClick={onNavigate}
                     title={`Create New ${cert.name}`}
+                    className={`p-1 rounded-lg transition flex items-center justify-center ${
+                      isCreateActive
+                        ? "bg-[#FF2D01] text-white shadow-xs"
+                        : active
+                        ? "text-[#FF2D01] hover:bg-orange-100"
+                        : "text-slate-400 hover:text-white hover:bg-[#FF2D01] group-hover:text-slate-600"
+                    }`}
+                  >
+                    <Plus className="w-3.5 h-3.5 stroke-[2.5]" />
+                  </Link>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+
+        {/* FUNCTIONAL REPORTS MENU */}
+        <div>
+          <div className="px-3 pb-2 text-[10px] font-bold text-slate-400 uppercase tracking-wider">
+            Functional Report
+          </div>
+          <div className="space-y-1">
+            {CERTIFICATE_TYPE_LIST.filter((c) => c.category === "functional-report").map((report) => {
+              const href = `/${report.key}`;
+              const createHref = `/${report.key}/new`;
+              const active = isActive(href);
+              const isCreateActive = pathname === createHref;
+              return (
+                <div
+                  key={report.key}
+                  className={`group flex items-center justify-between px-2.5 py-1 rounded-xl text-xs font-semibold transition ${
+                    active
+                      ? "bg-orange-50 text-[#FF2D01] font-bold"
+                      : "text-slate-600 hover:bg-slate-50 hover:text-slate-900"
+                  }`}
+                >
+                  <Link
+                    href={href}
+                    onClick={onNavigate}
+                    className="flex items-center gap-2.5 truncate flex-1 py-1"
+                    title={`View ${report.name}`}
+                  >
+                    <ClipboardCheck className="w-4 h-4 flex-shrink-0 text-[#FF2D01]" />
+                    <span className="truncate">{report.name}</span>
+                  </Link>
+
+                  <Link
+                    href={createHref}
+                    onClick={onNavigate}
+                    title={`Create New ${report.name}`}
                     className={`p-1 rounded-lg transition flex items-center justify-center ${
                       isCreateActive
                         ? "bg-[#FF2D01] text-white shadow-xs"

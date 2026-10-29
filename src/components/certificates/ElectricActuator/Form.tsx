@@ -14,6 +14,7 @@ import {
   ChevronUp,
 } from "lucide-react";
 import { CustomFieldsEditor } from "../common/CustomFieldsEditor";
+import { SignatorySelector } from "../common/SignatorySelector";
 
 interface ElectricActuatorFormProps {
   data: ElectricActuatorCertificateData;
@@ -29,6 +30,7 @@ interface ElectricActuatorFormProps {
 export const ElectricActuatorForm: React.FC<ElectricActuatorFormProps> = ({
   data,
   onChange,
+  errors = {},
   onSaveDraft,
   onSubmitForApproval,
   onCancel,
@@ -819,32 +821,26 @@ export const ElectricActuatorForm: React.FC<ElectricActuatorFormProps> = ({
         </button>
 
         {openSections.verification && (
-          <div className="p-4 grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <div>
-              <label className="block text-xs font-semibold text-slate-700 mb-1">
-                Performed By <span className="text-red-500">*</span>
-              </label>
-              <input
-                type="text"
-                value={data.witnessedBy ?? ""}
-                onChange={(e) => handleChange("witnessedBy", e.target.value)}
-                placeholder="SIVAGANESHAN.V.A"
-                className="w-full text-sm border border-slate-300 rounded-xl px-3 py-2 outline-none focus:ring-2 focus:ring-[#FF2D01]"
-              />
-            </div>
-
-            <div>
-              <label className="block text-xs font-semibold text-slate-700 mb-1">
-                Verified By <span className="text-red-500">*</span>
-              </label>
-              <input
-                type="text"
-                value={data.verifiedBy ?? ""}
-                onChange={(e) => handleChange("verifiedBy", e.target.value)}
-                placeholder="KARTHIKEYAN.A"
-                className="w-full text-sm border border-slate-300 rounded-xl px-3 py-2 outline-none focus:ring-2 focus:ring-[#FF2D01]"
-              />
-            </div>
+          <div className="p-4">
+            <SignatorySelector
+              witnessedBy={data.witnessedBy}
+              verifiedBy={data.verifiedBy}
+              witnessSignatureUrl={data.witnessSignatureUrl}
+              verifiedSignatureUrl={data.verifiedSignatureUrl}
+              onChangeWitnessedBy={(name, sigUrl) => {
+                handleChange("witnessedBy", name);
+                if (sigUrl !== undefined) {
+                  handleChange("witnessSignatureUrl", sigUrl);
+                }
+              }}
+              onChangeVerifiedBy={(name, sigUrl) => {
+                handleChange("verifiedBy", name);
+                if (sigUrl !== undefined) {
+                  handleChange("verifiedSignatureUrl", sigUrl);
+                }
+              }}
+              errors={errors}
+            />
           </div>
         )}
       </div>

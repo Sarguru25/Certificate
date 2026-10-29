@@ -2,12 +2,15 @@ import mongoose, { Schema, Document, Model } from "mongoose";
 
 export interface ICertificateDocument extends Document {
   certificateNumber: string;
+  lastCertificateNumber?: string;
+  pageCount?: number;
   certificateType:
     | "electric-actuator"
     | "limit-switch"
     | "pneumatic-actuator"
     | "solenoid-valve"
-    | "warranty-certificate";
+    | "warranty-certificate"
+    | "valve-functional-test";
   revision: number;
   parentCertificateId?: mongoose.Types.ObjectId;
   status: "DRAFT" | "PENDING_APPROVAL" | "REJECTED" | "APPROVED";
@@ -43,6 +46,14 @@ const CertificateSchema = new Schema<ICertificateDocument>(
       required: true,
       index: true,
     },
+    lastCertificateNumber: {
+      type: String,
+      index: true,
+    },
+    pageCount: {
+      type: Number,
+      default: 1,
+    },
     certificateType: {
       type: String,
       required: true,
@@ -52,6 +63,7 @@ const CertificateSchema = new Schema<ICertificateDocument>(
         "pneumatic-actuator",
         "solenoid-valve",
         "warranty-certificate",
+        "valve-functional-test",
       ],
       index: true,
     },

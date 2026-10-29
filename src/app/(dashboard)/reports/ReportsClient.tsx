@@ -281,7 +281,7 @@ export const ReportsClient: React.FC<ReportsClientProps> = ({
               Certificate Reports & Search
             </h1>
             <span className="font-mono text-xs font-bold px-2 py-0.5 rounded-md bg-orange-100 text-[#FF2D01] border border-orange-200">
-              ZIN Reports
+              ZIC Reports
             </span>
           </div>
           <p className="text-xs text-slate-500 mt-1">
@@ -419,7 +419,7 @@ export const ReportsClient: React.FC<ReportsClientProps> = ({
                     handleApplyFilters();
                   }
                 }}
-                placeholder="e.g. ZIN2600001, Armatury..."
+                placeholder="e.g. ZIC2600001, Armatury..."
                 className="w-full pl-9 pr-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-[#FF2D01] focus:bg-white transition"
               />
             </div>

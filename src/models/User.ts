@@ -6,6 +6,7 @@ export interface IUserDocument extends Document {
   passwordHash: string;
   roleId: mongoose.Types.ObjectId;
   isActive: boolean;
+  signature?: string;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -37,6 +38,11 @@ const UserSchema = new Schema<IUserDocument>(
     isActive: {
       type: Boolean,
       default: true,
+    },
+    signature: {
+      type: String,
+      default: "",
+      trim: true,
     },
   },
   {

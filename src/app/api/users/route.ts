@@ -56,6 +56,7 @@ export async function POST(req: NextRequest) {
         email: created.email,
         roleId: created.roleId,
         isActive: created.isActive,
+        signature: created.signature,
       },
     }, { status: 201 });
   } catch (error: unknown) {

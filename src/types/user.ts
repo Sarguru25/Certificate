@@ -14,6 +14,7 @@ export interface IUser {
   email: string;
   roleId: string | IRole;
   isActive: boolean;
+  signature?: string;
   createdAt?: string;
   updatedAt?: string;
 }

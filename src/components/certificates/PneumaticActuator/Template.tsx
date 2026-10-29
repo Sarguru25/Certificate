@@ -19,6 +19,7 @@ interface PneumaticActuatorTemplateProps {
 export const PneumaticActuatorTemplate: React.FC<PneumaticActuatorTemplateProps> = ({
   data,
   certificateNumber,
+  status,
 }) => {
   const lineItems: PneumaticActuatorLineItem[] =
     data.lineItems && data.lineItems.length > 0
@@ -267,12 +268,12 @@ export const PneumaticActuatorTemplate: React.FC<PneumaticActuatorTemplateProps>
           <SignatureSection
             data={{
               ...data,
-              showSignatures: true,
-              witnessSignatureUrl: data.witnessSignatureUrl || "/signature-sivaganeshan.png",
-              verifiedSignatureUrl: data.verifiedSignatureUrl || "/signature-karthikeyan.jpeg",
+              witnessSignatureUrl: data.witnessSignatureUrl || "/signature/signature-sivaganeshan.png",
+              verifiedSignatureUrl: data.verifiedSignatureUrl || "/signature/signature-karthikeyan.jpeg",
               witnessedBy: data.witnessedBy || "SIVAGANESHAN.V.A",
               verifiedBy: data.verifiedBy || "KARTHIKEYAN.A",
             }}
+            status={status}
           />
 
         <CertificateFooter />

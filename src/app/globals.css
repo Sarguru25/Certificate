@@ -139,30 +139,6 @@ body {
     min-height: 210mm !important;
     height: 210mm !important;
     max-height: 210mm !important;
-    padding: 8mm 10mm !important;
-  }
-
-  /* Hide seal and signatures during printing for physical manual signing & stamping */
-  #certificate-a4-document .signature-image,
-  #certificate-a4-document .signature-image-container,
-  #certificate-a4-document .print-hide-signature,
-  #certificate-a4-document [data-signature-img="true"],
-  #certificate-a4-document [data-signature-img="true"] * {
-    display: none !important;
-    visibility: hidden !important;
-    opacity: 0 !important;
-    height: 0 !important;
-    width: 0 !important;
-    margin: 0 !important;
-    padding: 0 !important;
-  }
-
-  #certificate-a4-document .signature-blank-line,
-  #certificate-a4-document .print-show-blank,
-  #certificate-a4-document [data-signature-blank="true"] {
-    display: block !important;
-    visibility: visible !important;
-    opacity: 1 !important;
   }
 }
 

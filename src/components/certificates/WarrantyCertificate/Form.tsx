@@ -4,6 +4,7 @@ import React, { useState } from "react";
 import { WarrantyCertificateData, CustomField } from "@/types/certificate";
 import { FileText, Shield, UserCheck, ChevronDown, ChevronUp } from "lucide-react";
 import { CustomFieldsEditor } from "../common/CustomFieldsEditor";
+import { SignatorySelector } from "../common/SignatorySelector";
 
 interface WarrantyCertificateFormProps {
   data: WarrantyCertificateData;
@@ -77,72 +78,67 @@ export const WarrantyCertificateForm: React.FC<WarrantyCertificateFormProps> = (
           <div className="p-4 grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div className="sm:col-span-2">
               <label className="block text-xs font-semibold text-slate-700 mb-1">
-                Customer Name <span className="text-red-500">*</span>
+                Customer <span className="text-red-500">*</span>
               </label>
               <input
                 type="text"
                 value={data.customerName ?? ""}
                 onChange={(e) => handleChange("customerName", e.target.value)}
                 className="w-full text-sm border border-slate-300 rounded-xl px-3 py-2 outline-none focus:ring-2 focus:ring-[#FF2D01]"
-                placeholder="e.g. Armatury Bauen Olomouc Controls Private Limited"
+                placeholder="e.g. ABC Private Limited"
               />
             </div>
 
             <div>
               <label className="block text-xs font-semibold text-slate-700 mb-1">
-                Sale Order No
+                Our Sales Order No.
               </label>
               <input
                 type="text"
                 value={data.salesOrderNo ?? data.invoiceNo ?? ""}
                 onChange={(e) => {
-                  handleChange("salesOrderNo", e.target.value);
-                  handleChange("invoiceNo", e.target.value);
+                  const val = e.target.value;
+                  onChange({
+                    ...data,
+                    salesOrderNo: val,
+                    invoiceNo: val,
+                  });
                 }}
                 className="w-full text-sm border border-slate-300 rounded-xl px-3 py-2 outline-none focus:ring-2 focus:ring-[#FF2D01]"
-                placeholder="e.g. ZIS26270145"
+                placeholder="e.g. 510"
               />
             </div>
 
             <div>
               <label className="block text-xs font-semibold text-slate-700 mb-1">
-                Sale Order Date
+                Customer PO No.
               </label>
               <input
                 type="text"
-                value={data.salesOrderDate ?? ""}
-                onChange={(e) => handleChange("salesOrderDate", e.target.value)}
-                className="w-full text-sm border border-slate-300 rounded-xl px-3 py-2 outline-none focus:ring-2 focus:ring-[#FF2D01]"
-                placeholder="e.g. 10-09-2026"
-              />
-            </div>
-
-            <div>
-              <label className="block text-xs font-semibold text-slate-700 mb-1">
-                Customer PO <span className="text-red-500">*</span>
-              </label>
-              <input
-                type="text"
-                value={data.customerPO ?? data.orderNo ?? "PO00900"}
+                value={data.customerPO ?? data.orderNo ?? ""}
                 onChange={(e) => {
-                  handleChange("customerPO", e.target.value);
-                  handleChange("orderNo", e.target.value);
+                  const val = e.target.value;
+                  onChange({
+                    ...data,
+                    customerPO: val,
+                    orderNo: val,
+                  });
                 }}
                 className="w-full text-sm border border-slate-300 rounded-xl px-3 py-2 outline-none focus:ring-2 focus:ring-[#FF2D01]"
-                placeholder="e.g. PO00900"
+                placeholder="e.g. P000900"
               />
             </div>
 
-            <div>
+            <div className="sm:col-span-2">
               <label className="block text-xs font-semibold text-slate-700 mb-1">
-                Customer PO Date
+                Product Description
               </label>
               <input
                 type="text"
-                value={data.customerPODate ?? "10-09-2026"}
-                onChange={(e) => handleChange("customerPODate", e.target.value)}
+                value={data.productDescription ?? ""}
+                onChange={(e) => handleChange("productDescription", e.target.value)}
                 className="w-full text-sm border border-slate-300 rounded-xl px-3 py-2 outline-none focus:ring-2 focus:ring-[#FF2D01]"
-                placeholder="e.g. 10-09-2026"
+                placeholder="e.g. Please refer above Sales Order"
               />
             </div>
 
@@ -152,10 +148,15 @@ export const WarrantyCertificateForm: React.FC<WarrantyCertificateFormProps> = (
               </label>
               <input
                 type="date"
-                value={data.certificateDate ?? data.invoiceDate ?? ""}
+                value={data.certificateDate ?? data.date ?? data.invoiceDate ?? ""}
                 onChange={(e) => {
-                  handleChange("certificateDate", e.target.value);
-                  handleChange("invoiceDate", e.target.value);
+                  const val = e.target.value;
+                  onChange({
+                    ...data,
+                    certificateDate: val,
+                    date: val,
+                    invoiceDate: val,
+                  });
                 }}
                 className="w-full text-sm border border-slate-300 rounded-xl px-3 py-2 outline-none focus:ring-2 focus:ring-[#FF2D01]"
               />
@@ -208,26 +209,41 @@ export const WarrantyCertificateForm: React.FC<WarrantyCertificateFormProps> = (
           <div className="p-4 space-y-4">
             <div>
               <label className="block text-xs font-semibold text-slate-700 mb-1">
-                Product Description (Optional)
+                Product Description
               </label>
               <input
                 type="text"
                 value={data.productDescription ?? ""}
                 onChange={(e) => handleChange("productDescription", e.target.value)}
-                placeholder="e.g. Pneumatic Actuator with Limit Switch & Solenoid Valve"
+                placeholder="e.g. Please refer above Sales Order"
                 className="w-full text-sm border border-slate-300 rounded-xl px-3 py-2 outline-none focus:ring-2 focus:ring-[#FF2D01]"
               />
             </div>
 
             <div>
               <label className="block text-xs font-semibold text-slate-700 mb-1">
-                Salutation
+                Company Name (For and on behalf of)
               </label>
               <input
                 type="text"
-                value={data.salutation ?? "To whom so here it my concern,"}
-                onChange={(e) => handleChange("salutation", e.target.value)}
+                value={data.companyName ?? "Zeetork Automation & Control Private Limited"}
+                onChange={(e) => handleChange("companyName", e.target.value)}
                 className="w-full text-sm border border-slate-300 rounded-xl px-3 py-2 outline-none focus:ring-2 focus:ring-[#FF2D01]"
+              />
+            </div>
+
+            <div>
+              <label className="block text-xs font-semibold text-slate-700 mb-1">
+                Introductory Warranty Declaration
+              </label>
+              <textarea
+                rows={2}
+                value={
+                  data.declarationText ??
+                  "We warrant that the products supplied under our above referred Sales Order conform to the agreed specifications and are free from manufacturing defects in materials and workmanship."
+                }
+                onChange={(e) => handleChange("declarationText", e.target.value)}
+                className="w-full text-sm border border-slate-300 rounded-xl p-2.5 outline-none focus:ring-2 focus:ring-[#FF2D01]"
               />
             </div>
 
@@ -236,27 +252,12 @@ export const WarrantyCertificateForm: React.FC<WarrantyCertificateFormProps> = (
                 Warranty Period
               </label>
               <textarea
-                rows={2}
-                value={
-                  data.warrantyPeriod ??
-                  "18 months from the date of supply or 12 months from the date of installation, whichever is earlier."
-                }
-                onChange={(e) => handleChange("warrantyPeriod", e.target.value)}
-                className="w-full text-sm border border-slate-300 rounded-xl p-2.5 outline-none focus:ring-2 focus:ring-[#FF2D01]"
-              />
-            </div>
-
-            <div>
-              <label className="block text-xs font-semibold text-slate-700 mb-1">
-                Warranty Note & Exclusions
-              </label>
-              <textarea
                 rows={3}
                 value={
-                  data.warrantyNote ??
-                  "The warranty is applicable only to manufacturing defects and does not cover normal wear and tear, improper usage, mishandling, or damage caused by improper installation or maintenance."
+                  data.warrantyPeriod ??
+                  "18 months from the date of supply or 12 months from the date of installation, whichever occurs earlier. Installation date must be supported by documentary evidence; otherwise, the supply date shall apply."
                 }
-                onChange={(e) => handleChange("warrantyNote", e.target.value)}
+                onChange={(e) => handleChange("warrantyPeriod", e.target.value)}
                 className="w-full text-sm border border-slate-300 rounded-xl p-2.5 outline-none focus:ring-2 focus:ring-[#FF2D01]"
               />
             </div>
@@ -305,34 +306,28 @@ export const WarrantyCertificateForm: React.FC<WarrantyCertificateFormProps> = (
         </button>
 
         {openSections.signatory && (
-          <div className="p-4 grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <div>
-              <label className="block text-xs font-semibold text-slate-700 mb-1">
-                Authorized Signatory Name
-              </label>
-              <input
-                type="text"
-                value={data.issuedBy ?? data.witnessedBy ?? "V.A SIVAGANESHAN"}
-                onChange={(e) => {
-                  handleChange("issuedBy", e.target.value);
-                  handleChange("witnessedBy", e.target.value);
-                }}
-                className="w-full text-sm border border-slate-300 rounded-xl px-3 py-2 outline-none focus:ring-2 focus:ring-[#FF2D01]"
-              />
-            </div>
-
-            <div className="flex items-center gap-2 pt-6">
-              <input
-                type="checkbox"
-                id="showSignatures"
-                checked={data.showSignatures !== false}
-                onChange={(e) => handleChange("showSignatures", e.target.checked)}
-                className="w-4 h-4 text-[#FF2D01] rounded border-slate-300 focus:ring-[#FF2D01]"
-              />
-              <label htmlFor="showSignatures" className="text-xs font-semibold text-slate-700 cursor-pointer">
-                Include Authorized Signature in Certificate
-              </label>
-            </div>
+          <div className="p-4 space-y-4">
+            <SignatorySelector
+              isWarranty={true}
+              issuedBy={data.issuedBy}
+              witnessedBy={data.witnessedBy}
+              witnessSignatureUrl={data.witnessSignatureUrl}
+              onChangeIssuedBy={(name, sigUrl) => {
+                handleChange("issuedBy", name);
+                handleChange("witnessedBy", name);
+                if (sigUrl !== undefined) {
+                  handleChange("witnessSignatureUrl", sigUrl);
+                }
+              }}
+              onChangeWitnessedBy={(name, sigUrl) => {
+                handleChange("witnessedBy", name);
+                handleChange("issuedBy", name);
+                if (sigUrl !== undefined) {
+                  handleChange("witnessSignatureUrl", sigUrl);
+                }
+              }}
+              onChangeVerifiedBy={() => {}}
+            />
           </div>
         )}
       </div>

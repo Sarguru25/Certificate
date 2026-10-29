@@ -9,12 +9,14 @@ import {
   LimitSwitchCertificateData,
   WarrantyCertificateData,
   PneumaticActuatorCertificateData,
+  ValveFunctionalTestCertificateData,
 } from "@/types/certificate";
 import { SolenoidValveForm } from "./SolenoidValve/Form";
 import { ElectricActuatorForm } from "./ElectricActuator/Form";
 import { LimitSwitchForm } from "./LimitSwitch/Form";
 import { WarrantyCertificateForm } from "./WarrantyCertificate/Form";
 import { PneumaticActuatorForm } from "./PneumaticActuator/Form";
+import { ValveFunctionalTestForm } from "./ValveFunctionalTest/Form";
 
 interface CertificateFormRendererProps {
   certificateType: CertificateType | string;
@@ -26,6 +28,7 @@ interface CertificateFormRendererProps {
   onCancel?: () => void;
   isSaving?: boolean;
   submitLabel?: string;
+  onSwitchToPreview?: () => void;
 }
 
 export const CertificateFormRenderer: React.FC<CertificateFormRendererProps> = ({
@@ -38,6 +41,7 @@ export const CertificateFormRenderer: React.FC<CertificateFormRendererProps> = (
   onCancel,
   isSaving,
   submitLabel,
+  onSwitchToPreview,
 }) => {
   switch (certificateType) {
     case "electric-actuator":
@@ -93,6 +97,21 @@ export const CertificateFormRenderer: React.FC<CertificateFormRendererProps> = (
           onCancel={onCancel}
           isSaving={isSaving}
           submitLabel={submitLabel}
+        />
+      );
+
+    case "valve-functional-test":
+      return (
+        <ValveFunctionalTestForm
+          data={data as ValveFunctionalTestCertificateData}
+          onChange={(val) => onChange(val)}
+          errors={errors}
+          onSaveDraft={onSaveDraft}
+          onSubmitForApproval={onSubmitForApproval}
+          onCancel={onCancel}
+          isSaving={isSaving}
+          submitLabel={submitLabel}
+          onSwitchToPreview={onSwitchToPreview}
         />
       );
 
