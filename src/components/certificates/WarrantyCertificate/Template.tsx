@@ -25,9 +25,9 @@ export const WarrantyCertificateTemplate: React.FC<WarrantyTemplateProps> = ({
   const generalCustom: CustomField[] = data.customFields?.general || [];
   const productCustom: CustomField[] = data.customFields?.product || [];
 
-  const customerName = data.customerName ?? "ABC Private Limited";
-  const salesOrderNo = data.salesOrderNo ?? data.invoiceNo ?? "510";
-  const poNumber = data.customerPO ?? data.orderNo ?? "P000900";
+  const customerName = data.customerName ?? "";
+  const salesOrderNo = data.salesOrderNo ?? data.invoiceNo ?? "";
+  const poNumber = data.customerPO ?? data.orderNo ?? "";
   const productDescription =
     data.productDescription ?? "Please refer above Sales Order";
 

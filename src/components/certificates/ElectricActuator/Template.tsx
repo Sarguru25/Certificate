@@ -137,7 +137,7 @@ export const ElectricActuatorTemplate: React.FC<ElectricActuatorTemplateProps> =
       description: "Supply / Rated Voltage",
       technicalDetails:
         data.supplyVoltageCriteria || data.operatingVoltage || "24V DC",
-      measuredValue: data.supplyVoltageMeasured || "24V",
+      measuredValue: data.supplyVoltageMeasured || "Yes",
       result: data.supplyVoltageResult || "Pass",
     });
   }
@@ -147,7 +147,7 @@ export const ElectricActuatorTemplate: React.FC<ElectricActuatorTemplateProps> =
     testRows.push({
       description: "Current Consumption",
       technicalDetails: data.currentConsumptionCriteria || "≤1 A",
-      measuredValue: data.currentConsumptionMeasured || ".25A",
+      measuredValue: data.currentConsumptionMeasured || "Yes",
       result: data.currentConsumptionResult || "Pass",
     });
   }
@@ -157,7 +157,7 @@ export const ElectricActuatorTemplate: React.FC<ElectricActuatorTemplateProps> =
     testRows.push({
       description: "Rotation Angle",
       technicalDetails: data.rotationAngleCriteria || "90°±2%",
-      measuredValue: data.rotationAngleMeasured || "90°",
+      measuredValue: data.rotationAngleMeasured || "Yes",
       result: data.rotationAngleResult || "Pass",
     });
   }
@@ -167,7 +167,7 @@ export const ElectricActuatorTemplate: React.FC<ElectricActuatorTemplateProps> =
     testRows.push({
       description: "Operating Time (90°)",
       technicalDetails: data.operatingTimeCriteria || "≤7 Sec",
-      measuredValue: data.operatingTimeMeasured || "7 Sec",
+      measuredValue: data.operatingTimeMeasured || "Yes",
       result: data.operatingTimeResult || "Pass",
     });
   }
@@ -177,7 +177,7 @@ export const ElectricActuatorTemplate: React.FC<ElectricActuatorTemplateProps> =
     testRows.push({
       description: "Functional Test (Open/Close)",
       technicalDetails: data.functionalTestCriteria || "Smooth Operation",
-      measuredValue: data.functionalTestMeasured || "Smooth",
+      measuredValue: data.functionalTestMeasured || "Satisfactory",
       result: data.functionalTestResult || "Pass",
     });
   }

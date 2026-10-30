@@ -481,22 +481,16 @@ export const ElectricActuatorForm: React.FC<ElectricActuatorFormProps> = ({
 
                   <div>
                     <label className="block text-[11px] font-semibold text-slate-600 mb-1">
-                      Measured Value (Editable)
+                      Check (Yes / No)
                     </label>
-                    <div className="flex gap-1.5">
-                      <input
-                        type="text"
-                        list="voltage-measured-options"
-                        value={data.supplyVoltageMeasured ?? "24V"}
-                        onChange={(e) => handleChange("supplyVoltageMeasured", e.target.value)}
-                        className="w-full text-xs border border-slate-300 rounded-lg px-2.5 py-1.5 outline-none focus:ring-1 focus:ring-[#FF2D01]"
-                      />
-                      <datalist id="voltage-measured-options">
-                        <option value="24V" />
-                        <option value="110V" />
-                        <option value="240V" />
-                      </datalist>
-                    </div>
+                    <select
+                      value={data.supplyVoltageMeasured ?? "Yes"}
+                      onChange={(e) => handleChange("supplyVoltageMeasured", e.target.value)}
+                      className="w-full text-xs border border-slate-300 rounded-lg px-2.5 py-1.5 outline-none focus:ring-1 focus:ring-[#FF2D01] bg-white cursor-pointer font-bold"
+                    >
+                      <option value="Yes">Yes</option>
+                      <option value="No">No</option>
+                    </select>
                   </div>
 
                   <div>
@@ -558,14 +552,16 @@ export const ElectricActuatorForm: React.FC<ElectricActuatorFormProps> = ({
                   </div>
                   <div>
                     <label className="block text-[11px] font-semibold text-slate-600 mb-1">
-                      Measured Value (Manual)
+                      Check (Yes / No)
                     </label>
-                    <input
-                      type="text"
-                      value={data.currentConsumptionMeasured ?? ".25A"}
+                    <select
+                      value={data.currentConsumptionMeasured ?? "Yes"}
                       onChange={(e) => handleChange("currentConsumptionMeasured", e.target.value)}
-                      className="w-full text-xs border border-slate-300 rounded-lg px-2.5 py-1.5 outline-none focus:ring-1 focus:ring-[#FF2D01]"
-                    />
+                      className="w-full text-xs border border-slate-300 rounded-lg px-2.5 py-1.5 outline-none focus:ring-1 focus:ring-[#FF2D01] bg-white cursor-pointer font-bold"
+                    >
+                      <option value="Yes">Yes</option>
+                      <option value="No">No</option>
+                    </select>
                   </div>
                   <div>
                     <label className="block text-[11px] font-semibold text-slate-600 mb-1">
@@ -626,14 +622,16 @@ export const ElectricActuatorForm: React.FC<ElectricActuatorFormProps> = ({
                   </div>
                   <div>
                     <label className="block text-[11px] font-semibold text-slate-600 mb-1">
-                      Measured Value
+                      Check (Yes / No)
                     </label>
-                    <input
-                      type="text"
-                      value={data.rotationAngleMeasured ?? "90°"}
+                    <select
+                      value={data.rotationAngleMeasured ?? "Yes"}
                       onChange={(e) => handleChange("rotationAngleMeasured", e.target.value)}
-                      className="w-full text-xs border border-slate-300 rounded-lg px-2.5 py-1.5 outline-none focus:ring-1 focus:ring-[#FF2D01]"
-                    />
+                      className="w-full text-xs border border-slate-300 rounded-lg px-2.5 py-1.5 outline-none focus:ring-1 focus:ring-[#FF2D01] bg-white cursor-pointer font-bold"
+                    >
+                      <option value="Yes">Yes</option>
+                      <option value="No">No</option>
+                    </select>
                   </div>
                   <div>
                     <label className="block text-[11px] font-semibold text-slate-600 mb-1">
@@ -694,14 +692,16 @@ export const ElectricActuatorForm: React.FC<ElectricActuatorFormProps> = ({
                   </div>
                   <div>
                     <label className="block text-[11px] font-semibold text-slate-600 mb-1">
-                      Measured Value (Manual)
+                      Check (Yes / No)
                     </label>
-                    <input
-                      type="text"
-                      value={data.operatingTimeMeasured ?? "7 Sec"}
+                    <select
+                      value={data.operatingTimeMeasured ?? "Yes"}
                       onChange={(e) => handleChange("operatingTimeMeasured", e.target.value)}
-                      className="w-full text-xs border border-slate-300 rounded-lg px-2.5 py-1.5 outline-none focus:ring-1 focus:ring-[#FF2D01]"
-                    />
+                      className="w-full text-xs border border-slate-300 rounded-lg px-2.5 py-1.5 outline-none focus:ring-1 focus:ring-[#FF2D01] bg-white cursor-pointer font-bold"
+                    >
+                      <option value="Yes">Yes</option>
+                      <option value="No">No</option>
+                    </select>
                   </div>
                   <div>
                     <label className="block text-[11px] font-semibold text-slate-600 mb-1">
@@ -762,14 +762,16 @@ export const ElectricActuatorForm: React.FC<ElectricActuatorFormProps> = ({
                   </div>
                   <div>
                     <label className="block text-[11px] font-semibold text-slate-600 mb-1">
-                      Measured Value
+                      Check (Satisfactory / Unsatisfactory)
                     </label>
-                    <input
-                      type="text"
-                      value={data.functionalTestMeasured ?? "Smooth"}
+                    <select
+                      value={data.functionalTestMeasured ?? "Satisfactory"}
                       onChange={(e) => handleChange("functionalTestMeasured", e.target.value)}
-                      className="w-full text-xs border border-slate-300 rounded-lg px-2.5 py-1.5 outline-none focus:ring-1 focus:ring-[#FF2D01]"
-                    />
+                      className="w-full text-xs border border-slate-300 rounded-lg px-2.5 py-1.5 outline-none focus:ring-1 focus:ring-[#FF2D01] bg-white cursor-pointer font-bold"
+                    >
+                      <option value="Satisfactory">Satisfactory</option>
+                      <option value="Unsatisfactory">Unsatisfactory</option>
+                    </select>
                   </div>
                   <div>
                     <label className="block text-[11px] font-semibold text-slate-600 mb-1">

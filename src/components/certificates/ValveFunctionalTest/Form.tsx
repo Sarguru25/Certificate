@@ -576,7 +576,7 @@ export const ValveFunctionalTestForm: React.FC<ValveFunctionalTestFormProps> = (
         {/* Section Header */}
         <div className="p-4 bg-slate-50/70 border-b border-slate-200/80 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
           <div className="flex items-center gap-2.5">
-            <div className="w-8 h-8 rounded-xl bg-blue-100 text-blue-600 flex items-center justify-center font-bold">
+            <div className="w-8 h-8 rounded-xl bg-orange-100 text-orange-600 flex items-center justify-center font-bold">
               <Layers className="w-4 h-4" />
             </div>
             <div>
@@ -646,9 +646,9 @@ export const ValveFunctionalTestForm: React.FC<ValveFunctionalTestFormProps> = (
         {productGroups[activeGroupIndex] && (
           <div className="p-5 space-y-6">
             {/* Group Title and Controls Bar */}
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-3 bg-blue-50/40 rounded-xl border border-blue-100">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-3 bg-orange-50/40 rounded-xl border border-orange-100">
               <div className="flex items-center gap-2">
-                <span className="w-6 h-6 rounded-lg bg-blue-600 text-white flex items-center justify-center text-xs font-black">
+                <span className="w-6 h-6 rounded-lg bg-orange-600 text-white flex items-center justify-center text-xs font-black">
                   {activeGroupIndex + 1}
                 </span>
                 <input
@@ -677,7 +677,7 @@ export const ValveFunctionalTestForm: React.FC<ValveFunctionalTestFormProps> = (
                   className="inline-flex items-center gap-1 px-2.5 py-1 text-xs font-bold text-slate-700 bg-white hover:bg-slate-100 border border-slate-200 rounded-lg transition"
                   title="Duplicate this model's specifications to a new group"
                 >
-                  <Copy className="w-3 h-3 text-blue-600" />
+                  <Copy className="w-3 h-3 text-orange-600" />
                   <span>Duplicate Model</span>
                 </button>
 
@@ -841,11 +841,11 @@ export const ValveFunctionalTestForm: React.FC<ValveFunctionalTestFormProps> = (
                   {/* Positioner */}
                   <div className={`p-2.5 rounded-lg border transition ${
                     productGroups[activeGroupIndex].hasPositioner
-                      ? "bg-white border-purple-300"
+                      ? "bg-white border-orange-300"
                       : "bg-slate-50 border-slate-200 opacity-70"
                   }`}>
                     <div className="flex items-center justify-between mb-1">
-                      <label className="flex items-center gap-1.5 text-xs font-bold text-purple-700 cursor-pointer">
+                      <label className="flex items-center gap-1.5 text-xs font-bold text-orange-700 cursor-pointer">
                         <input
                           type="checkbox"
                           checked={Boolean(productGroups[activeGroupIndex].hasPositioner)}
@@ -856,7 +856,7 @@ export const ValveFunctionalTestForm: React.FC<ValveFunctionalTestFormProps> = (
                               e.target.checked
                             )
                           }
-                          className="rounded text-purple-600"
+                          className="rounded text-orange-600"
                         />
                         <span>Positioner Model</span>
                       </label>
@@ -889,7 +889,7 @@ export const ValveFunctionalTestForm: React.FC<ValveFunctionalTestFormProps> = (
                       }
                       className={`w-full px-2 py-1 text-xs border rounded-lg outline-none ${
                         productGroups[activeGroupIndex].hasPositioner
-                          ? "bg-white border-purple-300"
+                          ? "bg-white border-orange-300"
                           : "bg-slate-100 text-slate-400 border-slate-200 cursor-not-allowed"
                       }`}
                     />
@@ -951,18 +951,18 @@ export const ValveFunctionalTestForm: React.FC<ValveFunctionalTestFormProps> = (
                   {/* LSB */}
                   <div className={`p-2.5 rounded-lg border transition ${
                     productGroups[activeGroupIndex].hasLsb
-                      ? "bg-white border-blue-300"
+                      ? "bg-white border-orange-300"
                       : "bg-slate-50 border-slate-200 opacity-70"
                   }`}>
                     <div className="flex items-center justify-between mb-1">
-                      <label className="flex items-center gap-1.5 text-xs font-bold text-blue-700 cursor-pointer">
+                      <label className="flex items-center gap-1.5 text-xs font-bold text-orange-700 cursor-pointer">
                         <input
                           type="checkbox"
                           checked={Boolean(productGroups[activeGroupIndex].hasLsb)}
                           onChange={(e) =>
                             handleGroupFieldChange(activeGroupIndex, "hasLsb", e.target.checked)
                           }
-                          className="rounded text-blue-600"
+                          className="rounded text-orange-600"
                         />
                         <span>LSB Model No</span>
                       </label>
@@ -995,7 +995,7 @@ export const ValveFunctionalTestForm: React.FC<ValveFunctionalTestFormProps> = (
                       }
                       className={`w-full px-2 py-1 text-xs border rounded-lg outline-none ${
                         productGroups[activeGroupIndex].hasLsb
-                          ? "bg-white border-blue-300"
+                          ? "bg-white border-orange-300"
                           : "bg-slate-100 text-slate-400 border-slate-200 cursor-not-allowed"
                       }`}
                     />
@@ -1100,14 +1100,14 @@ export const ValveFunctionalTestForm: React.FC<ValveFunctionalTestFormProps> = (
 
                     {/* Positioner */}
                     {productGroups[activeGroupIndex].hasPositioner && (
-                      <div className="flex items-center gap-1.5 bg-purple-50/80 px-2.5 py-1.5 rounded-lg border border-purple-200">
-                        <span className="font-bold text-purple-700">Positioner:</span>
+                      <div className="flex items-center gap-1.5 bg-orange-50/80 px-2.5 py-1.5 rounded-lg border border-orange-200">
+                        <span className="font-bold text-orange-700">Positioner:</span>
                         <select
                           value={productGroups[activeGroupIndex].poFunction || "Pass"}
                           onChange={(e) =>
                             handleGroupFieldChange(activeGroupIndex, "poFunction", e.target.value)
                           }
-                          className="text-xs font-bold text-purple-800 bg-white px-1.5 py-0.5 rounded border border-purple-200 outline-none"
+                          className="text-xs font-bold text-orange-800 bg-white px-1.5 py-0.5 rounded border border-orange-200 outline-none"
                         >
                           <option value="Pass">Pass</option>
                           <option value="Fail">Fail</option>
@@ -1134,14 +1134,14 @@ export const ValveFunctionalTestForm: React.FC<ValveFunctionalTestFormProps> = (
 
                     {/* LSB */}
                     {productGroups[activeGroupIndex].hasLsb && (
-                      <div className="flex items-center gap-1.5 bg-blue-50/80 px-2.5 py-1.5 rounded-lg border border-blue-200">
-                        <span className="font-bold text-blue-700">LSB:</span>
+                      <div className="flex items-center gap-1.5 bg-orange-50/80 px-2.5 py-1.5 rounded-lg border border-orange-200">
+                        <span className="font-bold text-orange-700">LSB:</span>
                         <select
                           value={productGroups[activeGroupIndex].lsbFunction || "Pass"}
                           onChange={(e) =>
                             handleGroupFieldChange(activeGroupIndex, "lsbFunction", e.target.value)
                           }
-                          className="text-xs font-bold text-blue-800 bg-white px-1.5 py-0.5 rounded border border-blue-200 outline-none"
+                          className="text-xs font-bold text-orange-800 bg-white px-1.5 py-0.5 rounded border border-orange-200 outline-none"
                         >
                           <option value="Pass">Pass</option>
                           <option value="Fail">Fail</option>
@@ -1176,7 +1176,7 @@ export const ValveFunctionalTestForm: React.FC<ValveFunctionalTestFormProps> = (
                 <div>
                   <h4 className="text-xs font-bold text-slate-800 uppercase tracking-wider flex items-center gap-2">
                     <span>Valves List for this Model</span>
-                    <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-blue-100 text-blue-700">
+                    <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-orange-100 text-orange-700">
                       {productGroups[activeGroupIndex].items.length} Valves entered
                     </span>
                     <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-100 text-emerald-700">
@@ -1211,7 +1211,7 @@ export const ValveFunctionalTestForm: React.FC<ValveFunctionalTestFormProps> = (
                   <button
                     type="button"
                     onClick={() => handleAddItemsToGroup(activeGroupIndex, 15)}
-                    className="px-2.5 py-1 text-xs font-bold bg-blue-50 hover:bg-blue-100 text-blue-700 border border-blue-200 rounded-lg transition"
+                    className="px-2.5 py-1 text-xs font-bold bg-orange-50 hover:bg-orange-100 text-orange-700 border border-orange-200 rounded-lg transition"
                     title="Add exactly 15 rows (1 full PDF page)"
                   >
                     +15 Rows (1 Page)
@@ -1228,7 +1228,7 @@ export const ValveFunctionalTestForm: React.FC<ValveFunctionalTestFormProps> = (
                     className="inline-flex items-center gap-1 px-2.5 py-1 text-xs font-bold text-slate-700 bg-white hover:bg-slate-100 border border-slate-200 rounded-lg transition"
                     title="Auto generate sequential tag numbers and actuator serials"
                   >
-                    <Hash className="w-3.5 h-3.5 text-blue-600" />
+                    <Hash className="w-3.5 h-3.5 text-orange-600" />
                     <span>Auto Number</span>
                   </button>
 
@@ -1302,7 +1302,7 @@ export const ValveFunctionalTestForm: React.FC<ValveFunctionalTestFormProps> = (
                       return (
                         <tr
                           key={item.id || idx}
-                          className={`hover:bg-slate-50/80 transition ${isPageBoundary ? "border-t-2 border-t-blue-400" : ""
+                          className={`hover:bg-slate-50/80 transition ${isPageBoundary ? "border-t-2 border-t-orange-400" : ""
                             }`}
                         >
                           {/* S.No */}
@@ -1314,8 +1314,8 @@ export const ValveFunctionalTestForm: React.FC<ValveFunctionalTestFormProps> = (
                           <td className="p-1.5 border-r border-slate-200 text-center">
                             <span
                               className={`px-2 py-0.5 rounded text-[10px] font-black ${pageNumberInGroup % 2 === 1
-                                  ? "bg-blue-100 text-blue-700"
-                                  : "bg-purple-100 text-purple-700"
+                                  ? "bg-orange-100 text-orange-700"
+                                  : "bg-orange-100 text-orange-700"
                                 }`}
                             >
                               Page {pageNumberInGroup}
@@ -1473,7 +1473,7 @@ export const ValveFunctionalTestForm: React.FC<ValveFunctionalTestFormProps> = (
                                 type="button"
                                 onClick={() => handleDuplicateItem(activeGroupIndex, idx)}
                                 title="Duplicate this row"
-                                className="p-1 text-slate-400 hover:text-blue-600 rounded transition"
+                                className="p-1 text-slate-400 hover:text-orange-600 rounded transition"
                               >
                                 <Copy className="w-3.5 h-3.5" />
                               </button>
@@ -1498,7 +1498,7 @@ export const ValveFunctionalTestForm: React.FC<ValveFunctionalTestFormProps> = (
               <div className="p-3 bg-slate-50 rounded-xl border border-slate-200 text-xs text-slate-600 flex items-center justify-between">
                 <span>
                   Total <strong>{productGroups[activeGroupIndex].items.length} valves</strong> in this model will generate{" "}
-                  <strong className="text-blue-600">
+                  <strong className="text-orange-600">
                     {Math.max(
                       1,
                       Math.ceil(productGroups[activeGroupIndex].items.length / 15)
@@ -1510,7 +1510,7 @@ export const ValveFunctionalTestForm: React.FC<ValveFunctionalTestFormProps> = (
                 <button
                   type="button"
                   onClick={() => handleAddItemsToGroup(activeGroupIndex, 15)}
-                  className="text-xs font-bold text-blue-600 hover:underline"
+                  className="text-xs font-bold text-orange-600 hover:underline"
                 >
                   + Add Next Page (15 Items)
                 </button>
@@ -1530,7 +1530,7 @@ export const ValveFunctionalTestForm: React.FC<ValveFunctionalTestFormProps> = (
           className="w-full flex items-center justify-between p-4 bg-slate-50/70 hover:bg-slate-100/70 transition border-b border-slate-200/80"
         >
           <div className="flex items-center gap-2.5">
-            <div className="w-8 h-8 rounded-xl bg-purple-100 text-purple-600 flex items-center justify-center font-bold">
+            <div className="w-8 h-8 rounded-xl bg-orange-100 text-orange-600 flex items-center justify-center font-bold">
               <CheckCircle2 className="w-4 h-4" />
             </div>
             <div className="text-left">
@@ -1641,7 +1641,7 @@ V-002	ACT-002	3.0 sec	3.0 sec	3.0 sec	3.0 sec	3.0 sec	3.0 sec"
           <div className="bg-white rounded-2xl shadow-2xl max-w-md w-full p-6 space-y-4">
             <div className="flex items-center justify-between">
               <h3 className="font-bold text-base text-slate-900 flex items-center gap-2">
-                <Hash className="w-5 h-5 text-blue-600" />
+                <Hash className="w-5 h-5 text-orange-600" />
                 <span>Auto-Generate Sequential Numbers</span>
               </h3>
               <button
@@ -1724,7 +1724,7 @@ V-002	ACT-002	3.0 sec	3.0 sec	3.0 sec	3.0 sec	3.0 sec	3.0 sec"
               <button
                 type="button"
                 onClick={handleApplyAutoNumbering}
-                className="px-4 py-2 text-xs font-bold text-white bg-blue-600 hover:bg-blue-700 rounded-xl shadow-xs"
+                className="px-4 py-2 text-xs font-bold text-white bg-orange-600 hover:bg-orange-700 rounded-xl shadow-xs"
               >
                 Apply to All Rows
               </button>

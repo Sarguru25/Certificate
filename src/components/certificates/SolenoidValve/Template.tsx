@@ -34,7 +34,7 @@ export const SolenoidValveTemplate: React.FC<SolenoidValveTemplateProps> = ({
         {/* Header with 1px borders and 4-box grid */}
         <CertificateHeader
           title="Certificate of Conformity"
-          subtitle="Solenoid Valve"
+          subtitle="SOLENOID VALVE"
           certificateNumber={certificateNumber}
           customerName={data.customerName}
           salesOrderNo={data.salesOrderNo}

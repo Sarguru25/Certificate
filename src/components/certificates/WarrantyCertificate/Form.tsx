@@ -85,7 +85,7 @@ export const WarrantyCertificateForm: React.FC<WarrantyCertificateFormProps> = (
                 value={data.customerName ?? ""}
                 onChange={(e) => handleChange("customerName", e.target.value)}
                 className="w-full text-sm border border-slate-300 rounded-xl px-3 py-2 outline-none focus:ring-2 focus:ring-[#FF2D01]"
-                placeholder="e.g. ABC Private Limited"
+                placeholder="e.g. Truflow Solutions Private Limited"
               />
             </div>
 
